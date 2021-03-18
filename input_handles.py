@@ -1,23 +1,30 @@
-import tcod as libtcod
+from typing import Optional
 
-def key_handles(key):
-    # Movement keys
-    if key.vk == libtcod.KEY_UP:
-        return {'move': (0, -1)}
-    elif key.vk == libtcod.KEY_DOWN:
-        return {'move': (0, 1)}
-    elif key.vk == libtcod.KEY_LEFT:
-        return {'move': (-1, 0)}
-    elif key.vk == libtcod.KEY_RIGHT:
-        return {'move': (1, 0)}
+import tcod.event
 
-    if key.vk == libtcod.KEY_ENTER and key.lalt:
-        # Alt+Enter: toggle full screen
-        return {'fullscreen': True}
+from actions import Action, EscapeAction, MovementAction
 
-    elif key.vk == libtcod.KEY_ESCAPE:
-        # Exit the game
-        return {'exit': True}
 
-    # No key was pressed
-    return {}
+class EventHandler(tcod.event.EventDispatch[Action]):
+    def ev_quit(self, event: tcod.event.Quit) -> Optional[Action]:
+        raise SystemExit()
+
+    def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
+        action: Optional[Action] = None
+
+        key = event.sym
+
+        if key == tcod.event.K_UP:
+            action = MovementAction(dx=0, dy=-1)
+        elif key == tcod.event.K_DOWN:
+            action = MovementAction(dx=0, dy=1)
+        elif key == tcod.event.K_LEFT:
+            action = MovementAction(dx=-1, dy=0)
+        elif key == tcod.event.K_RIGHT:
+            action = MovementAction(dx=1, dy=0)
+
+        elif key == tcod.event.K_ESCAPE:
+            action = EscapeAction()
+
+        # No valid key was pressed
+        return action
