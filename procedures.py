@@ -1,10 +1,13 @@
 import random
 import tcod
 from typing import Iterator, Tuple, List, TYPE_CHECKING
+import names
 
 import game_tiles
+import entity_maker
 from game_map import Game_Map
 from entity import Entity
+
 
 if TYPE_CHECKING:
     from entity import Entity
@@ -35,6 +38,29 @@ class RectangleRoom:
             and self.y2 >= other.y1
         )
 
+### BEGIN NON-CLASS METHODS
+#Type hinting: methods are created before classes so if you type-hint a class name
+#it must be in strings otherwise you'll get a Name Error     
+def getName():
+    return names.get_first_name()
+
+def place_entities(room: 'RectangleRoom', dungeon: Game_Map, monster_max: int) -> None:
+    num_monsters = random.randint(0, monster_max)
+
+    for i in range(num_monsters):
+        x = random.randint(room.x1 + 1, room.x2 - 1)
+        y = random.randint(room.y1 + 1, room.y2 - 1)
+
+        if not any(entity.x == x and entity.y == y for entity in dungeon.entities):
+            # TODO: if in 'seek' mode and not 'idle'
+            # TODO: monster types that change in mode
+            if random.random() < 0.8:
+                other = entity_maker.getUniquePerson()
+                other.spawn(x=x, y=y, game_map=dungeon)
+            else:
+                entity_maker.me.spawn(x=x, y=y, game_map=dungeon)
+
+
 
 def tunneler(start: Tuple[int, int], end: Tuple[int, int]) -> Iterator[Tuple[int, int]]:
     x1, y1 = start
@@ -60,10 +86,11 @@ def generate_dungeon(
     max_rooms: int, 
     room_min_size: int, 
     room_max_size: int,
+    monster_max: int,
     player: Entity
 ) -> Game_Map:
 
-    dungeon = Game_Map(m_width, m_height);
+    dungeon = Game_Map(m_width, m_height, entities=[player]);
     rooms: List[RectangleRoom] = []
     
     for i in range(max_rooms):
@@ -93,6 +120,9 @@ def generate_dungeon(
             #put tunnels b/w rest of rooms
             for x,y in tunneler(rooms[-1].center, nw_room.center):
                 dungeon.tiles[x, y] = game_tiles.floor
+
+        #push entities to room
+        place_entities(room=nw_room, dungeon=dungeon, monster_max=monster_max)
 
         rooms.append(nw_room)
 

@@ -36,12 +36,12 @@ SHROUD = np.array((ord(" "), (255, 255, 255), (0, 0, 0)), dtype=graphic_dt)
 floor = new_tile(
     transparent=True, 
     walkable=True, 
-    dark=(ord("F"), (255, 0, 255), (50, 50, 150)),
+    dark=(ord(" "), (255, 255, 255), (50, 50, 150)),
     light=(ord(" "), (255, 255, 255), (200, 180, 50)),
 )
 wall = new_tile(
     walkable=False, 
     transparent=False, 
-    dark=(ord("W"), (0, 255, 255), (0, 0, 100)),
+    dark=(ord(" "), (0, 255, 255), (0, 0, 100)),
     light=(ord(" "), (255, 255, 255), (200, 180, 50)),
 )
