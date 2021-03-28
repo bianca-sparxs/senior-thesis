@@ -2,7 +2,7 @@ from typing import Optional
 
 import tcod.event
 
-from actions import Action, BumpAction, EscapeAction
+from actions import Action, BumpAction, EscapeAction, GameModeAction
 
 
 class EventHandler(tcod.event.EventDispatch[Action]):
@@ -13,6 +13,7 @@ class EventHandler(tcod.event.EventDispatch[Action]):
         action: Optional[Action] = None
         key = event.sym
 
+        #movement
         if key == tcod.event.K_UP:
             action = BumpAction(dx=0, dy=-1)
         elif key == tcod.event.K_DOWN:
@@ -21,7 +22,13 @@ class EventHandler(tcod.event.EventDispatch[Action]):
             action = BumpAction(dx=-1, dy=0)
         elif key == tcod.event.K_RIGHT:
             action = BumpAction(dx=1, dy=0)
+        
+        #game mode
+        elif key == tcod.event.K_s:
+            print("switch game mode")
+            action = GameModeAction()
 
+        #exit game
         elif key == tcod.event.K_ESCAPE:
             action = EscapeAction()
 

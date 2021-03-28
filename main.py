@@ -40,7 +40,7 @@ def main():
 
     #set up listeners for mouse and keyboard
     event_handler = EventHandler()
-    engine = Engine(game_map=game_map, event_handler=event_handler, player=player)
+    engine = Engine(game_map=game_map, event_handler=event_handler, player=player, mode="idle")
 
 
     with tcod.context.new_terminal(

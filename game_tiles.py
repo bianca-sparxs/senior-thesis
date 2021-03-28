@@ -1,5 +1,6 @@
 from typing import Tuple
 import numpy as np
+import colors
 
 #set up structs that are compatible with tcod.Console.tiles_rgb
 #ord() -> python func that take a one-char string as arg and return the unicode representation
@@ -44,4 +45,19 @@ wall = new_tile(
     transparent=False, 
     dark=(ord(" "), (0, 255, 255), (0, 0, 100)),
     light=(ord(" "), (255, 255, 255), (200, 180, 50)),
+)
+
+#COLOR PALETTE IN SEEK MODE:
+s_floor = new_tile(
+    transparent=True, 
+    walkable=True, 
+    dark=(ord(" "), (255, 255, 255), (50, 50, 150)),
+    light=(ord(" "), (255, 255, 255), colors.salmon),
+)
+
+s_wall = new_tile(
+    walkable=False, 
+    transparent=False, 
+    dark=(ord(" "), (0, 255, 255), (0, 0, 100)),
+    light=(ord(" "), (255, 255, 255), colors.light_blue),
 )

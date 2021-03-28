@@ -21,6 +21,9 @@ class EscapeAction(Action):
     def perform(self, engine: Engine, entity: Entity) -> None:
         raise SystemExit()
 
+class GameModeAction(Action):
+    def perform(self, engine: Engine, entity: Entity) -> None:
+        return engine.rerender()
     pass
 
 #super class that will hold the movement from the input handle

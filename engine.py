@@ -1,6 +1,6 @@
 import tcod
 from input_handles import EventHandler
-from actions import EscapeAction, MovementAction
+from actions import EscapeAction, MovementAction, GameModeAction
 from entity import Entity
 from game_map import Game_Map
 
@@ -13,11 +13,20 @@ from tcod.map import compute_fov
 # TODO: enviroment keeps track of two game modes seek and idle. need to edit input_handle & main(?)
 
 class Engine:
-    def __init__(self, event_handler: EventHandler, player: Entity, game_map: Game_Map):
+    def __init__(self, event_handler: EventHandler, player: Entity, game_map: Game_Map, mode: str):
+        self.mode = mode
         self.event_handler = event_handler
         self.player = player
         self.game_map = game_map
         self.update_fov()
+    
+    #change color of game_map
+    def rerender(self):
+        if self.mode == "idle":
+            self.mode = "seek"
+        else:
+            self.mode = "idle"
+        print(self.mode)
 
     def others_handleturn(self) -> None:
         for entity in self.game_map.entities - {self.player}:
@@ -29,6 +38,8 @@ class Engine:
 
             if action is None:
                 continue
+            # elif action is instanceof(GameModeAction):
+
 
             action.perform(self, self.player)
             self.others_handleturn()
@@ -49,7 +60,10 @@ class Engine:
 
 
     def render(self, console: Console, context: Context) -> None:
-        self.game_map.render(console)
+        if self.mode == "idle":
+            self.game_map.render(console)
+        elif self.mode == "seek":
+            self.game_map.s_render(console)
 
         context.present(console)
 
