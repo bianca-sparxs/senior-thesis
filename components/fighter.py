@@ -48,6 +48,6 @@ class Fighter(Person):
     def energy(self, value: int) -> None:
         self._energy = max(0, min(value, self.max_energy))
         if self._energy == 0 and self.entity.ai:
-            self.die()
+            self.die
 
     

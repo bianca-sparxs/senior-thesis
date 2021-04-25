@@ -46,6 +46,11 @@ class Engine:
         )
 
         self.game_map.explored |= self.game_map.visible #visible tiles get added to explore
+    
+    #energy degenerates as you play
+    #TODO: smart way to decrease energy
+    def decrease_energy(self) -> None:
+        self.player.fighter.energy -= 2
 
 
 

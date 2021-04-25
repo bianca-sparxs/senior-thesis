@@ -52,16 +52,6 @@ class EventHandler(tcod.event.EventDispatch[Action]):
 
     def handle_events(self) -> None:
         raise NotImplementedError()
-        for event in tcod.event.wait():
-            action = self.dispatch(event)
-
-            if action is None:
-                continue
-
-            action.perform()
-
-            self.engine.others_handleturn()
-            self.engine.update_fov()  # Update the FOV before the players next action.
 
     def ev_quit(self, event: tcod.event.Quit) -> Optional[Action]:
         raise SystemExit()
@@ -78,6 +68,7 @@ class MainEventHandler(EventHandler):
 
             self.engine.others_handleturn()
             self.engine.update_fov()  # Update the FOV before the players next action.
+            self.engine.decrease_energy()
 
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
         action: Optional[Action] = None
@@ -104,7 +95,6 @@ class MainEventHandler(EventHandler):
 
 class GameOverEventHandler(EventHandler):
     def handle_events(self) -> None:
-        raise NotImplementedError()
         for event in tcod.event.wait():
             action = self.dispatch(event)
 
