@@ -45,6 +45,7 @@ class EscapeAction(Action):
 class GameModeAction(Action):
     def perform(self) -> None:
         return self.engine.rerender()
+        #TODO: take set of entities and change color pallete based on game mode
 
 class WaitAction(Action):
     def perform(self) -> None:
@@ -101,13 +102,14 @@ class InitiateAction(ActionWithDirection):
 
         print(f"{self.entity.name} needs {target.name}'s help.")
 
-        HandleTaskAction(self.entity)
+        HandleTaskAction(self.entity).perform()
 
 #this is the action that lowers the players energy (or not) and adds to the score
 class HandleTaskAction(Action):
     def perform(self) -> None:
         pass
-        #TODO: if self.entity.name == self.engine.player.name then you need to make the target (T) to be dead
+        #TODO: look at tcod tutorial part 6 to see how to call setters
+        #TODO: if self.entity is self.engine.player then you need to make the target (T) to be dead
 
 class MovementAction(ActionWithDirection):
     def perform(self) -> None:
