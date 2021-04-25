@@ -1,25 +1,28 @@
-import tcod
-from input_handles import EventHandler
-from actions import EscapeAction, MovementAction, GameModeAction
-from entity import Entity
-from game_map import Game_Map
-
-from typing import Iterable, Any
+# import tcod
+from __future__ import annotations
+from typing import TYPE_CHECKING
 
 from tcod.context import Context
 from tcod.console import Console
 from tcod.map import compute_fov
 
-# TODO: enviroment keeps track of two game modes seek and idle. need to edit input_handle & main(?)
+from input_handles import EventHandler
+
+if TYPE_CHECKING:
+    from entity import Entity
+    from game_map import Game_Map
+    
+    
+
 
 class Engine:
-    def __init__(self, event_handler: EventHandler, player: Entity, game_map: Game_Map, mode: str):
+    game_map: Game_Map
+
+    def __init__(self, player: Entity, mode: str):
+        self.event_handler: EventHandler = EventHandler(self)
         self.mode = mode
-        self.event_handler = event_handler
         self.player = player
-        self.game_map = game_map
-        self.update_fov()
-    
+
     #change color of game_map
     def rerender(self):
         if self.mode == "idle":
@@ -29,22 +32,9 @@ class Engine:
         print(self.mode)
 
     def others_handleturn(self) -> None:
-        for entity in self.game_map.entities - {self.player}:
-            print(f'The {entity.name} wonders when it will get to take a real turn.')
-
-    def handle_events(self, events: Iterable[Any]) -> None:
-        for event in events:
-            action = self.event_handler.dispatch(event)
-
-            if action is None:
-                continue
-            # elif action is instanceof(GameModeAction):
-
-
-            action.perform(self, self.player)
-            self.others_handleturn()
-
-            self.update_fov() #update field of view after actions
+        for entity in set(self.game_map.actors) - {self.player}:
+            if entity.ai:
+                entity.ai.perform()
     
     def update_fov(self) -> None:
         # print('update!')
@@ -60,10 +50,13 @@ class Engine:
 
 
     def render(self, console: Console, context: Context) -> None:
-        if self.mode == "idle":
-            self.game_map.render(console)
-        elif self.mode == "seek":
-            self.game_map.s_render(console)
+        self.game_map.render(console)
+
+        console.print(
+            x=1,
+            y=47,
+            string=f"HP: {self.player.fighter.hp}/{self.player.fighter.max_hp}",
+        )
 
         context.present(console)
 

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import random
 import tcod
 from typing import Iterator, Tuple, List, TYPE_CHECKING
@@ -6,10 +8,10 @@ import names
 import game_tiles
 import entity_maker
 from game_map import Game_Map
-from entity import Entity
 
 
 if TYPE_CHECKING:
+    from engine import Engine
     from entity import Entity
 
 class RectangleRoom:
@@ -40,11 +42,11 @@ class RectangleRoom:
 
 ### BEGIN NON-CLASS METHODS
 #Type hinting: methods are created before classes so if you type-hint a class name
-#it must be in strings otherwise you'll get a Name Error     
+#it must be in strings otherwise you'll get a Name Error IFF you are not using annotations import  
 def getName():
     return names.get_first_name()
 
-def place_entities(room: 'RectangleRoom', dungeon: Game_Map, monster_max: int) -> None:
+def place_entities(room: RectangleRoom, dungeon: Game_Map, monster_max: int) -> None:
     num_monsters = random.randint(0, monster_max)
 
     for i in range(num_monsters):
@@ -52,13 +54,14 @@ def place_entities(room: 'RectangleRoom', dungeon: Game_Map, monster_max: int) -
         y = random.randint(room.y1 + 1, room.y2 - 1)
 
         if not any(entity.x == x and entity.y == y for entity in dungeon.entities):
-            # TODO: if in 'seek' mode and not 'idle'
-            # TODO: monster types that change in mode
-            if random.random() < 0.8:
-                other = entity_maker.getUniquePerson()
-                other.spawn(x=x, y=y, game_map=dungeon)
-            else:
-                entity_maker.me.spawn(x=x, y=y, game_map=dungeon)
+            # NOTTODO: if in 'seek' mode and not 'idle'
+            # NOTTODO: monster types that change in mode
+            other = entity_maker.getUniquePerson()
+            other.spawn(x=x, y=y, gamemap=dungeon)
+            # if random.random() < 0.8:         #no need for different monster types other ppl are rocks basically
+                #spawn monstertype 1
+            # else:
+                #spawn monstertype 2
 
 
 
@@ -87,10 +90,11 @@ def generate_dungeon(
     room_min_size: int, 
     room_max_size: int,
     monster_max: int,
-    player: Entity
+    engine: Engine,
 ) -> Game_Map:
 
-    dungeon = Game_Map(m_width, m_height, entities=[player]);
+    player = engine.player
+    dungeon = Game_Map(engine, m_width, m_height, entities=[player]);
     rooms: List[RectangleRoom] = []
     
     for i in range(max_rooms):
@@ -115,7 +119,8 @@ def generate_dungeon(
 
         #put player in first room
         if len(rooms) == 0:
-            player.x, player.y = nw_room.center
+            # player.x, player.y = nw_room.center
+            player.place(*nw_room.center, dungeon)
         else:
             #put tunnels b/w rest of rooms
             for x,y in tunneler(rooms[-1].center, nw_room.center):

@@ -4,7 +4,7 @@
 - simulation (test out algorithms w/o game schtuff)
 
 ## Simulation
-
+- no time so not doing this
 
 ## Looking for Something [in-progess game name]
 closley following [http://rogueliketutorials.com/tutorials/tcod/v2/]

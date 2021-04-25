@@ -33,6 +33,7 @@ def new_tile(*, #enforce use of keywords, param order doesn't matter
     return np.array((walkable, transparent, dark, light), dtype=tile_dt)
 
 SHROUD = np.array((ord(" "), (255, 255, 255), (0, 0, 0)), dtype=graphic_dt)
+S_SHROUD = np.array((ord(" "), (155, 115, 25), (0, 10, 0)), dtype=graphic_dt)
 
 floor = new_tile(
     transparent=True, 

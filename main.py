@@ -1,10 +1,9 @@
 import tcod
 import copy
+# from typing import TYPE_CHECKING
 
 from engine import Engine
-from game_map import Game_Map
 import entity_maker
-from input_handles import EventHandler
 from procedures import generate_dungeon
 
 
@@ -15,6 +14,7 @@ def main():
 
     screen_width = 50
     screen_height = 60
+    # FLAGS = tcod.context.SDL_WINDOW_MAXIMIZED
 
     map_width = 50
     map_height = 50
@@ -28,37 +28,31 @@ def main():
 
     player = copy.deepcopy(entity_maker.player)
     
-    game_map = generate_dungeon(
+    engine = Engine(player=player, mode="idle")
+
+    engine.game_map = generate_dungeon(
         m_width=map_width, 
         m_height=map_height, 
         max_rooms=max_rooms, 
         room_min_size=room_min_size, 
         room_max_size=room_max_size, 
         monster_max=monster_max, 
-        player=player
+        engine=engine
     )
-
-    #set up listeners for mouse and keyboard
-    event_handler = EventHandler()
-    engine = Engine(game_map=game_map, event_handler=event_handler, player=player, mode="idle")
-
+    engine.update_fov()
 
     with tcod.context.new_terminal(
         screen_width,
         screen_height,
         tileset=tileset,
         title="Seek",
-        vsync=True
+        vsync=True,
     ) as context:
         root_console = tcod.Console(screen_width, screen_height, order="F")
         # print(tcod.console.recommended_size())
         while True:
-            
-
-            events = tcod.event.wait()
-
-            engine.handle_events(events)
             engine.render(console=root_console, context=context)
+            engine.event_handler.handle_events()
 
 
 if __name__ == "__main__":

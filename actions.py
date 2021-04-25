@@ -4,7 +4,14 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from engine import Engine
-    from entity import Entity
+    from entity import Actor, Entity
+
+"""
+Learning Python: 
+@property decorator makes a method a property of the class.
+Returns the private instance attribute value self.__XYZ. 
+So, we can now use the XYZ() method as a property to get the value of the XYZ attribute.
+"""
 
 class Action:
     """ all subclasses must invoke a perform method that takes:
@@ -12,74 +19,107 @@ class Action:
             - entity: thing that will be changed (either player or entities)
             - engine:  the game engine context
     """
-    def perform(self, engine: Engine, entity: Entity) -> None:
+    def __init__(self, entity: Actor) -> None:
+        super().__init__()
+        self.entity = entity
+
+    @property
+    def engine(self) -> Engine:
+        """Return the engine this action belongs to."""
+        return self.entity.gamemap.engine
+
+    def perform(self) -> None:
+        """
+        `self.engine` is the scope this action is being performed in.
+        `self.entity` is the object performing the action.
+        """
         raise NotImplementedError()
+    
 
 
 
 class EscapeAction(Action):
-    def perform(self, engine: Engine, entity: Entity) -> None:
+    def perform(self) -> None:
         raise SystemExit()
 
 class GameModeAction(Action):
-    def perform(self, engine: Engine, entity: Entity) -> None:
-        return engine.rerender()
-    pass
+    def perform(self) -> None:
+        return self.engine.rerender()
+
+class WaitAction(Action):
+    def perform(self) -> None:
+        pass
 
 #super class that will hold the movement from the input handle
 class ActionWithDirection(Action):
-    def __init__(self, dx: int, dy: int):
-        super().__init__()
+    def __init__(self, entity: Actor, dx: int, dy: int):
+        super().__init__(entity)
 
         self.dx = dx
         self.dy = dy
     
+    @property
+    def dest_xy(self) -> Tuple[int, int]:
+        """Returns this actions destination."""
+        return self.entity.x + self.dx, self.entity.y + self.dy
+
+    @property
+    def blocking_entity(self) -> Optional[Entity]:
+        """Return the blocking entity at this actions destination.."""
+        return self.engine.game_map.get_blocking_entity_at_location(*self.dest_xy)
+    
+    @property
+    def target_actor(self) -> Optional[Actor]:
+        """Return the actor at this actions destination."""
+        return self.engine.game_map.get_actor_at_location(*self.dest_xy)
+    
     #each subclass needs a perform method
-    def perform(self, engine: Engine, entity: Entity) -> None:
+    def perform(self) -> None:
         raise NotImplementedError()
 
-#perform movement action is blocking, else do initiate task 
+#perform movement action if not blocking, else do initiate task 
 class BumpAction(ActionWithDirection):
-    def perform(self, engine: Engine, entity: Entity) -> None:
-        dest_x = entity.x + self.dx
-        dest_y = entity.y + self.dy
+    def perform(self) -> None:
+        # dest_x = entity.x + self.dx
+        # dest_y = entity.y + self.dy
 
-        if engine.game_map.get_blocking_entity_at_location(dest_x, dest_y):
-            return InitiateAction(self.dx, self.dy).perform(engine, entity)
+        if self.target_actor:
+            return InitiateAction(self.entity, self.dx, self.dy).perform()
 
         else:
-            return MovementAction(self.dx, self.dy).perform(engine, entity)
+            return MovementAction(self.entity, self.dx, self.dy).perform()
 
 #equivalent of melee actions
 class InitiateAction(ActionWithDirection):
-    def perform(self, engine: Engine, entity: Entity) -> None:
-        dest_x = entity.x + self.dx
-        dest_y = entity.y + self.dy
-        target = engine.game_map.get_blocking_entity_at_location(dest_x, dest_y)
+    def perform(self) -> None:
+        target = self.target_actor
         if not target:
             return  # No entity to attack.
 
-        print(f"You inquire about {target.name}'s well being.")
+        #TODO: create task object with motivation, T energy gain, and special
+        #TODO: create popup interface where player can agree
 
+        print(f"{self.entity.name} needs {target.name}'s help.")
 
-class MovementAction(Action):
-    def __init__(self, dx: int, dy: int):
-        super().__init__()
+        HandleTaskAction(self.entity)
 
-        self.dx = dx
-        self.dy = dy
+#this is the action that lowers the players energy (or not) and adds to the score
+class HandleTaskAction(Action):
+    def perform(self) -> None:
+        pass
+        #TODO: if self.entity.name == self.engine.player.name then you need to make the target (T) to be dead
 
-    def perform(self, engine: Engine, entity: Entity) -> None:
-        dest_x = self.dx + entity.x
-        dest_y = self.dy + entity.y
+class MovementAction(ActionWithDirection):
+    def perform(self) -> None:
+        dest_x, dest_y = self.dest_xy #dest_xy precalculates position of entity plus distance :)
 
-        if not engine.game_map.in_bounds(dest_x, dest_y):
+        if not self.engine.game_map.in_bounds(dest_x, dest_y):
             return  # Destination is out of bounds.
-        if not engine.game_map.tiles["walkable"][dest_x, dest_y]:
+        if not self.engine.game_map.tiles["walkable"][dest_x, dest_y]:
             return  # Destination is blocked by a tile.
-        if engine.game_map.get_blocking_entity_at_location(dest_x, dest_y):
+        if self.engine.game_map.get_blocking_entity_at_location(dest_x, dest_y):
             return #destination is blocked by entity
 
         
-        entity.move(dx=self.dx, dy=self.dy)
+        self.entity.move(dx=self.dx, dy=self.dy)
 
