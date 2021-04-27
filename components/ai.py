@@ -54,9 +54,9 @@ class OtherPerson(BaseAI):
         dy = target.y - self.entity.y
         distance = max(abs(dx), abs(dy))  # Chebyshev distance, max distance over 2d matrix
 
-        if self.engine.game_map.visible[self.entity.x, self.entity.y]: #init task when next to player
-            if distance <= 1:
-                return InitiateAction(self.entity, dx, dy).perform()
+        if self.engine.game_map.visible[self.entity.x, self.entity.y]: #if T in field of view
+            # if distance <= 1:
+            #     return InitiateAction(self.entity, dx, dy).perform() #T cannot init to @; only @ to T
 
             self.path = self.get_path_to(target.x, target.y)
         

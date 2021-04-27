@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 from render_order import RenderOrder
-from input_handles import GameOverEventHandler
+from input_handles import GameOverEventHandler, TaskHandler, MainEventHandler
 
 from components.base import BaseComponent
 ##TODO: other people don't play game like you, they're just rocks
@@ -13,10 +13,23 @@ if TYPE_CHECKING:
 class Person(BaseComponent):
     entity: Actor
 
+ 
+class Fighter(Person):
+    entity: Actor
+    def __init__(self, energy: int):
+        self.max_energy = energy
+        self._energy = energy
+
+
+    @property
+    def energy(self) -> int:
+        return self._energy
+    
     @property
     def die(self) -> None:
         if self.engine.player is self.entity:
             death_message = "You died!"
+            death_message_color = colors.player_die
             self.engine.event_handler = GameOverEventHandler(self.engine)
         else:
             death_message = f"{self.entity.name} is no longer availble..."
@@ -28,26 +41,18 @@ class Person(BaseComponent):
         self.entity.name = f"remains of {self.entity.name}"
         self.entity.render_order = RenderOrder.CORPSE
 
-        print(death_message)
+        self.engine.message_log.add_message(death_message, death_message_color)
+    
+    
 
-
-
-class Fighter(Person):
-    entity: Actor
-    def __init__(self, energy: int):
-        self.max_energy = energy
-        self._energy = energy
-
-
-    @property
-    def energy(self) -> int:
-        return self._energy
-
-    #refactor to make only applicable to player, lets get onto making inteerfaces alreadyyy
     @energy.setter
     def energy(self, value: int) -> None:
         self._energy = max(0, min(value, self.max_energy))
         if self._energy == 0 and self.entity.ai:
             self.die
-
+    
+    # def create_task(self) -> None:
+    #     self.engine.event_handler = TaskHandler(self.engine)
+    def resume(self) -> None:
+        self.engine.event_handler = MainEventHandler(self.engine)
     

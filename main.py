@@ -4,6 +4,7 @@ import copy
 
 from engine import Engine
 import entity_maker
+import colors
 from procedures import generate_dungeon
 
 
@@ -17,7 +18,7 @@ def main():
     # FLAGS = tcod.context.SDL_WINDOW_MAXIMIZED
 
     map_width = 50
-    map_height = 50
+    map_height = 45
     room_max_size = 10
     room_min_size = 6
     max_rooms = 30
@@ -28,7 +29,7 @@ def main():
 
     player = copy.deepcopy(entity_maker.player)
     
-    engine = Engine(player=player, mode="idle")
+    engine = Engine(player=player)
 
     engine.game_map = generate_dungeon(
         m_width=map_width, 
@@ -40,6 +41,9 @@ def main():
         engine=engine
     )
     engine.update_fov()
+    engine.message_log.add_message(
+        "Anyone who thinks sitting in a church makes you saint must think sitting in a garage makes you a car.", colors.lite_green
+    )
 
     with tcod.context.new_terminal(
         screen_width,
@@ -51,8 +55,13 @@ def main():
         root_console = tcod.Console(screen_width, screen_height, order="F")
         # print(tcod.console.recommended_size())
         while True:
-            engine.render(console=root_console, context=context)
-            engine.event_handler.handle_events()
+            root_console.clear()
+            engine.event_handler.on_render(console=root_console)
+            context.present(root_console)
+
+            engine.event_handler.handle_events(context)
+
+            
 
 
 if __name__ == "__main__":

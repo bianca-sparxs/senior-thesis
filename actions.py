@@ -2,9 +2,15 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import tasks
+import input_handles
+from renderer import render_task
 if TYPE_CHECKING:
     from engine import Engine
     from entity import Actor, Entity
+    from input_handles import TaskHandler, MainEventHandler
+    
+
 
 """
 Learning Python: 
@@ -17,7 +23,8 @@ class Action:
     """ all subclasses must invoke a perform method that takes:
         @params: 
             - entity: thing that will be changed (either player or entities)
-            - engine:  the game engine context
+        
+        engine:  the game engine context
     """
     def __init__(self, entity: Actor) -> None:
         super().__init__()
@@ -91,7 +98,8 @@ class BumpAction(ActionWithDirection):
             return MovementAction(self.entity, self.dx, self.dy).perform()
 
 #equivalent of melee actions
-class InitiateAction(ActionWithDirection):
+class InitiateAction(ActionWithDirection):        
+    
     def perform(self) -> None:
         target = self.target_actor
         if not target:
@@ -99,17 +107,35 @@ class InitiateAction(ActionWithDirection):
 
         #TODO: create task object with motivation, T energy gain, and special
         #TODO: create popup interface where player can agree
-
+        # self.entity.fighter.create_task()
+        # self.engine
+        # self.engine.task
+        self.engine.event_handler=input_handles.TaskHandler(self.engine)
         print(f"{self.entity.name} needs {target.name}'s help.")
 
-        HandleTaskAction(self.entity).perform()
 
 #this is the action that lowers the players energy (or not) and adds to the score
-class HandleTaskAction(Action):
-    def perform(self) -> None:
-        pass
-        #TODO: look at tcod tutorial part 6 to see how to call setters
+class HandleTaskAction(Action): 
+    """
+        params:
+        decision: accept task or not
+        motivation: to calulcate energy gain/loss (from Task class)
+        special: bool if you get energy, not lose
+        T energy gain: to add to scorekeeper
+    """
+    def perform(self, decision: bool) -> None:         
+        if decision:
+            print("you accept the task") #decrease/increase player energy and 
+        else:
+            print("you move onwards")
+        
+        self.entity.fighter.resume() #return back to playing
         #TODO: if self.entity is self.engine.player then you need to make the target (T) to be dead
+
+        
+        # self.engine.event_handler=MainEventHandler(self.engine) 
+        
+        
 
 class MovementAction(ActionWithDirection):
     def perform(self) -> None:

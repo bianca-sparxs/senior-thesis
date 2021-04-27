@@ -2,27 +2,34 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from tcod.context import Context
 from tcod.console import Console
 from tcod.map import compute_fov
 
 from input_handles import MainEventHandler
+from renderer import render_bar, render_task
+from message_log import MessageLog
+import colors
+
 
 if TYPE_CHECKING:
     from entity import Actor
     from game_map import Game_Map
     from input_handles import EventHandler
-    
-    
-
+  
 
 class Engine:
     game_map: Game_Map
 
-    def __init__(self, player: Actor, mode: str):
+    def __init__(self, player: Actor):
         self.event_handler: EventHandler = MainEventHandler(self)
-        self.mode = mode
+        self.mode = "idle"
         self.player = player
+        self.message_log = MessageLog()
+    
+    # @property
+    # def task(self, console: Console, motivation: int, T_energy: int, special: bool):
+    #     return render_task(console, motivation, special)
+    
 
     #change color of game_map
     def rerender(self):
@@ -30,7 +37,7 @@ class Engine:
             self.mode = "seek"
         else:
             self.mode = "idle"
-        print(self.mode)
+        self.message_log.add_message(self.mode, colors.lite_blue)
 
     def others_handleturn(self) -> None:
         for entity in set(self.game_map.actors) - {self.player}:
@@ -52,20 +59,13 @@ class Engine:
     def decrease_energy(self) -> None:
         self.player.fighter.energy -= 2
 
-
-
-
-    def render(self, console: Console, context: Context) -> None:
+    def render(self, console: Console) -> None:
         self.game_map.render(console)
-
-        console.print(
-            x=1,
-            y=47,
-            string=f"HP: {self.player.fighter.energy}/{self.player.fighter.max_energy}",
+        self.message_log.render(console=console, x=21, y=45, width=40, height=5)
+        render_bar(
+            console=console,
+            current_value=self.player.fighter.energy,
+            maximum_value=self.player.fighter.max_energy,
+            total_width=33
         )
-
-        context.present(console)
-
-        console.clear()
-
 
