@@ -4,6 +4,7 @@ from typing import Optional, TYPE_CHECKING
 import tcod.event
 
 from renderer import render_task
+from tasks import create_task
 from actions import Action, BumpAction, EscapeAction, GameModeAction, HandleTaskAction
 
 if TYPE_CHECKING:
@@ -108,6 +109,10 @@ class MainEventHandler(EventHandler):
         return action
 
 class TaskHandler(EventHandler):
+    def __init__(self, engine: Engine) -> None:
+        super().__init__(engine)
+        self.task = create_task()
+
     def handle_events(self, context: tcod.context.Context) -> None:
         for event in tcod.event.wait():
             action = self.dispatch(event)
@@ -121,6 +126,7 @@ class TaskHandler(EventHandler):
         action: Optional[Action] = None
         key = event.sym
         player = self.engine.player
+        print(self.task["motivation"]) 
 
         #accept/reject task
         if key == tcod.event.K_n:
@@ -133,12 +139,14 @@ class TaskHandler(EventHandler):
             action = EscapeAction(player)
     
         # No valid key was pressed
+        print(self.task)
         return action
     
     def on_render(self, console: tcod.Console) -> None: # When main switches to this eventHandler, call this on_render
         super().on_render(console)  # Draw the main state as the background.
         # print("render task")
-        render_task(console, 30, 30, True)
+        stats = self.task
+        render_task(console, stats["motivation"], stats["T Energy Gain"], stats["special"])
 
 
 class GameOverEventHandler(EventHandler):

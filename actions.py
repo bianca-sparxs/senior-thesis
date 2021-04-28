@@ -130,6 +130,7 @@ class HandleTaskAction(Action):
             print("you move onwards")
         
         self.entity.fighter.resume() #return back to playing
+        #kill the target
         #TODO: if self.entity is self.engine.player then you need to make the target (T) to be dead
 
         

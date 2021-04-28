@@ -16,9 +16,13 @@ def t_energyGain():
     return random.random()
 
 def special():
+    if random.random() > 0.5:
+        return False
     return True;
 
-def create_task(self, entity: Entity):
-
-    pass
-    
+def create_task():
+    return {
+        "motivation": motivation(),
+        "T Energy Gain": t_energyGain(),
+        "special": special()
+    }
