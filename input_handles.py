@@ -126,27 +126,36 @@ class TaskHandler(EventHandler):
         action: Optional[Action] = None
         key = event.sym
         player = self.engine.player
-        print(self.task["motivation"]) 
+        # print(self.task["motivation"]) 
 
         #accept/reject task
         if key == tcod.event.K_n:
-            action = HandleTaskAction(player).perform(False)
+            action = HandleTaskAction(player).perform(
+                decision=False, 
+                motivation=self.task["motivation"], 
+                t_energyGain=self.task["T Energy Gain"], 
+                special=self.task["special"]
+            )
         elif key == tcod.event.K_y:
-            action = HandleTaskAction(player).perform(True)
+            action = HandleTaskAction(player).perform(
+                decision=True, 
+                motivation=self.task["motivation"], 
+                t_energyGain=self.task["T Energy Gain"], 
+                special=self.task["special"]
+            )
+            
 
         #quick quit game    
         elif key == tcod.event.K_ESCAPE:
             action = EscapeAction(player)
     
         # No valid key was pressed
-        print(self.task)
         return action
     
     def on_render(self, console: tcod.Console) -> None: # When main switches to this eventHandler, call this on_render
         super().on_render(console)  # Draw the main state as the background.
         # print("render task")
-        stats = self.task
-        render_task(console, stats["motivation"], stats["T Energy Gain"], stats["special"])
+        render_task(console, self.task["motivation"], self.task["T Energy Gain"], self.task["special"])
 
 
 class GameOverEventHandler(EventHandler):

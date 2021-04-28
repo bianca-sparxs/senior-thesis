@@ -77,7 +77,7 @@ class Actor(Entity):
         char: str = "?",
         color: Tuple[int, int, int] = (255, 255, 255),
         name: str = "<Unnamed>",
-        fighter: Optional[Fighter] = None, #only player entity is a fighter (for now at least)
+        fighter: Fighter, #only player entity is a fighter (for now at least)
         ai_cls: Type[BaseAI],
     ):
         super().__init__( #setting up superclass vars (Entity) from Actor init,

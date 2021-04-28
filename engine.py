@@ -8,6 +8,7 @@ from tcod.map import compute_fov
 from input_handles import MainEventHandler
 from renderer import render_bar, render_task
 from message_log import MessageLog
+from scorekeeper import ScoreKeeper
 import colors
 
 
@@ -25,6 +26,7 @@ class Engine:
         self.mode = "idle"
         self.player = player
         self.message_log = MessageLog()
+        self.scorekeeper = ScoreKeeper()
     
     # @property
     # def task(self, console: Console, motivation: int, T_energy: int, special: bool):
@@ -57,7 +59,8 @@ class Engine:
     #energy degenerates as you play
     #TODO: smart way to decrease energy
     def decrease_energy(self) -> None:
-        self.player.fighter.energy -= 2
+        self.player.fighter.energy -= 1
+        self.scorekeeper.score += 1
 
     def render(self, console: Console) -> None:
         self.game_map.render(console)

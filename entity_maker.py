@@ -12,7 +12,8 @@ def getUniquePerson():
     return Actor(
         char="T", 
         color=(63, 127, 0), 
-        name=getName(), 
+        name=getName(),
+        fighter=Fighter(energy=1), 
         ai_cls=OtherPerson
 )
 
