@@ -27,9 +27,10 @@ def render_task(
     console: Console, motivation: int, T_energy: int, special: bool
 ) -> None:
 
-    console.draw_rect(x=2, y=1, width=30, height=5, ch=3, bg=colors.salmon)
+    console.draw_rect(x=1, y=1, width=33, height=9, ch=3, bg=colors.bar_filled)
 
 
     console.print(
-        x=3, y=2, string=f"motivation: {motivation}\nT energy gain: {T_energy}\nspecial: {special}", fg=colors.bar_text
+        x=2, y=2, string=f"""motivation: {motivation}\nT energy gain: {T_energy}\nspecial: {special}\n
+        \ny- accept the task, lose energy\nn- move onwards""", fg=colors.bar_text
     )
