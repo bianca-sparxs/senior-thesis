@@ -37,8 +37,13 @@ class Engine:
     def rerender(self):
         if self.mode == "idle":
             self.mode = "seek"
+            self.player.color = colors.salmon
+            for entity in set(self.game_map.actors) - {self.player}:
+                entity.color = colors.welcome_text
+
         else:
             self.mode = "idle"
+            self.player.color = colors.white
         self.message_log.add_message(self.mode, colors.lite_blue)
 
     def others_handleturn(self) -> None:
@@ -64,11 +69,11 @@ class Engine:
 
     def render(self, console: Console) -> None:
         self.game_map.render(console)
-        self.message_log.render(console=console, x=21, y=45, width=40, height=5)
+        self.message_log.render(console=console, x=17, y=30, width=15, height=5)
         render_bar(
             console=console,
             current_value=self.player.fighter.energy,
             maximum_value=self.player.fighter.max_energy,
-            total_width=33
+            total_width=15
         )
 

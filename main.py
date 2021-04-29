@@ -13,19 +13,19 @@ def main():
     print ("wattup")
     # TODO: screen dimensions as the ratio of monitor, monitor dimensions are__
 
-    screen_width = 50
-    screen_height = 60
+    screen_width = 35
+    screen_height = 35
     # FLAGS = tcod.context.SDL_WINDOW_MAXIMIZED
 
-    map_width = 50
-    map_height = 45
+    map_width = 35
+    map_height = 30
     room_max_size = 10
     room_min_size = 6
     max_rooms = 30
     monster_max = 2 #max amt of monsters in a room
 
  
-    tileset = tcod.tileset.load_tilesheet('arial10x10.png', 32, 8, tcod.tileset.CHARMAP_TCOD)
+    tileset = tcod.tileset.load_tilesheet('dejavu16x16.png', 32, 8, tcod.tileset.CHARMAP_TCOD)
 
     player = copy.deepcopy(entity_maker.player)
     
@@ -53,8 +53,17 @@ def main():
         vsync=True,
     ) as context:
         root_console = tcod.Console(screen_width, screen_height, order="F")
-        # print(tcod.console.recommended_size())
+        # tcod.lib.SDL_SetWindowFullscreen(context.sdl_window_p,tcod.lib.SDL_WINDOW_FULLSCREEN_DESKTOP)
+        # fullscreen = tcod.lib.SDL_GetWindowFlags(context.sdl_window_p) & (
+        # tcod.lib.SDL_WINDOW_FULLSCREEN | tcod.lib.SDL_WINDOW_FULLSCREEN_DESKTOP
+        #  )
+        # tcod.lib.SDL_SetWindowFullscreen(
+        #     context.sdl_window_p,
+        #     0 if fullscreen else tcod.lib.SDL_WINDOW_FULLSCREEN_DESKTOP,
+        # )
+        
         while True:
+            # tcod.console.recommended_size()
             root_console.clear()
             engine.event_handler.on_render(console=root_console)
             context.present(root_console)
