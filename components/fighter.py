@@ -12,11 +12,11 @@ if TYPE_CHECKING:
     from entity import Actor
 
 class Person(BaseComponent):
-    entity: Actor
+    parent: Actor
 
  
 class Fighter(Person):
-    entity: Actor
+    parent: Actor
     def __init__(self, energy: int):
         self.max_energy = energy
         self._energy = energy
@@ -28,31 +28,29 @@ class Fighter(Person):
     
     @property
     def die(self) -> None:
-        if self.engine.player is self.entity:
+        if self.engine.player is self.parent:
             death_message = "You died!"
             death_message_color = colors.player_die
-            self.entity.char = "%"
-            self.entity.color = (191, 0, 0)
-            self.engine.event_handler = GameOverEventHandler(self.engine)
+            self.parent.char = "%"
+            self.parent.color = (191, 0, 0)
+            self.parent.event_handler = GameOverEventHandler(self.engine)
         else:
-            death_message = f"{self.entity.name} waits for a response..."
+            death_message = f"{self.parent.name} needs your help and awaits a response..."
             death_message_color = colors.lite_blue
-            self.entity.char = "T"
-            self.entity.color = colors.salmon
-        self.entity.blocks_movement = False
-        self.entity.ai = None
-        self.entity.name = f"{self.entity.name} is sleeping..."
-        self.entity.render_order = RenderOrder.CORPSE
+            self.parent.color = colors.salmon
+        self.parent.blocks_movement = False
+        self.parent.ai = None
+        self.parent.name = f"{self.parent.name} is sleeping..."
+        self.parent.render_order = RenderOrder.CORPSE
 
         self.engine.message_log.add_message(death_message, death_message_color)
-        self.engine.message_log.add_message(str(self.engine.scorekeeper.score), colors.white)
     
     
 
     @energy.setter
     def energy(self, value: int) -> None:
         self._energy = max(0, min(value, self.max_energy))
-        if self._energy == 0 and self.entity.ai:
+        if self._energy == 0 and self.parent.ai:
             self.die
     
     # def create_task(self) -> None:

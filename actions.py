@@ -108,8 +108,6 @@ class InitiateAction(ActionWithDirection):
             return  # No entity to attack.
 
         self.engine.event_handler=input_handles.TaskHandler(self.engine)
-        self.engine.message_log.add_message(f"{target.name} needs your help...")
-
         target.fighter.energy -= 1 #energy of other people always is 1, as in one task per person 
 
 

@@ -6,11 +6,10 @@ import numpy as np  # type: ignore
 import tcod
 
 from actions import Action
-from components.base import BaseComponent
 from actions import Action, InitiateAction, MovementAction, WaitAction
 
 
-class BaseAI(Action, BaseComponent):
+class BaseAI(Action):
     def perform(self) -> None:
         raise NotImplementedError()
 

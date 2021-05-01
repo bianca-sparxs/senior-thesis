@@ -19,11 +19,11 @@ T = TypeVar("T", bound="Entity")
     """
     #python, have to have all non-default args first before default, instead of changing code, just make all args default
 class Entity:
-    gamemap: Game_Map
+    parent: Game_Map
     
     def __init__(
         self, 
-        gamemap: Optional[Game_Map] = None,
+        parent: Optional[GameMap] = None,
         x: int = 0, 
         y: int = 0, 
         char: str = "?", 
@@ -39,17 +39,21 @@ class Entity:
         self.name = name
         self.blocks_movement = blocks_movement
         self.render_order = render_order
-        if gamemap:
+        if parent:
             # If gamemap isn't provided now then it will be set later.
-            self.gamemap = gamemap
-            gamemap.entities.add(self)
+            self.parent = parent
+            parent.entities.add(self)
+    
+    @property
+    def gamemap(self) -> GameMap:
+        return self.parent.gamemap
 
     def spawn(self: T, gamemap: Game_Map, x: int, y: int) -> T:
         """Spawn a copy of this instance at the given location."""
         clone = copy.deepcopy(self)
         clone.x = x
         clone.y = y
-        clone.gamemap = gamemap
+        clone.parent = gamemap
         gamemap.entities.add(clone)
         return clone
     
@@ -58,9 +62,10 @@ class Entity:
         self.x = x
         self.y = y
         if gamemap:
-            if hasattr(self, "gamemap"):  # Possibly uninitialized.
-                self.gamemap.entities.remove(self)
-            self.gamemap = gamemap
+            if hasattr(self, "parent"):  # Possibly uninitialized.
+                if self.parent is self.gamemap:
+                    self.gamemap.entities.remove(self)
+            self.parent = gamemap
             gamemap.entities.add(self)
 
     def move(self, dx: int, dy: int) -> None:
@@ -94,7 +99,7 @@ class Actor(Entity):
 
         if fighter:
             self.fighter = fighter
-            self.fighter.entity = self
+            self.fighter.parent = self
 
     @property
     def is_alive(self) -> bool:

@@ -7,7 +7,7 @@ from tcod.map import compute_fov
 from random import seed, random
 
 from input_handles import MainEventHandler
-from renderer import render_bar, render_task
+from renderer import render_bar, render_task, render_names_at_mouse_location
 from message_log import MessageLog
 from scorekeeper import ScoreKeeper
 import colors
@@ -27,6 +27,7 @@ class Engine:
         self.mode = "idle"
         self.player = player
         self.message_log = MessageLog()
+        self.mouse_location = (0, 0)
         self.scorekeeper = ScoreKeeper()
     
     # @property
@@ -81,4 +82,5 @@ class Engine:
             maximum_value=self.player.fighter.max_energy,
             total_width=15
         )
+        render_names_at_mouse_location(console=console, x=2, y=4, engine=self)
 

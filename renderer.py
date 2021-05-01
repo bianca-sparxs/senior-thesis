@@ -6,6 +6,19 @@ import colors
 
 if TYPE_CHECKING:
     from tcod import Console
+    from engine import Engine
+    from game_map import GameMap
+
+
+def get_names_at_location(x: int, y: int, game_map: GameMap) -> str:
+    if not game_map.in_bounds(x, y) or not game_map.visible[x, y]:
+        return ""
+
+    names = ", ".join(
+        entity.name for entity in game_map.entities if entity.x == x and entity.y == y
+    )
+
+    return names.capitalize()
 
 def render_bar(
     console: Console, current_value: int, maximum_value: int, total_width: int
@@ -34,3 +47,14 @@ def render_task(
         x=2, y=2, string=f"""motivation: {motivation}\nT energy gain: {T_energy}\nspecial?: {special}\n
         \n[y]- accept task\n[n]- move onwards""", fg=colors.bar_text
     )
+
+def render_names_at_mouse_location(
+    console: Console, x: int, y: int, engine: Engine
+) -> None:
+    mouse_x, mouse_y = engine.mouse_location
+
+    names_at_mouse_location = get_names_at_location(
+        x=mouse_x, y=mouse_y, game_map=engine.game_map
+    )
+
+    console.print(x=x, y=y, string=names_at_mouse_location)
