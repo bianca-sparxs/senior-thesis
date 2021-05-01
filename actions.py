@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import tasks
+from tasks import calcEnergy
 import input_handles
 from renderer import render_task
 from scorekeeper import ScoreKeeper
@@ -108,7 +108,7 @@ class InitiateAction(ActionWithDirection):
             return  # No entity to attack.
 
         self.engine.event_handler=input_handles.TaskHandler(self.engine)
-        self.engine.message_log.add_message(f"{target.name} needs {self.entity.name}'s help.")
+        self.engine.message_log.add_message(f"{target.name} needs your help...")
 
         target.fighter.energy -= 1 #energy of other people always is 1, as in one task per person 
 
@@ -122,21 +122,46 @@ class HandleTaskAction(Action):
         special: bool if you get energy, not lose
         T energy gain: to add to scorekeeper
     """
-    def perform(self, decision: bool, motivation: int, t_energyGain: int, special: bool) -> None:         
+    def perform(self, decision: bool, motivation: int, t_energyGain: int, special: bool) -> None: 
         if decision:
             print("you accept the task")
-            if not special: #decrease/increase player energy and 
-                self.engine.scorekeeper.score += motivation # this is fake for now
+            if not special: 
+                energy = calcEnergy(motivation, special)
+                self.entity.fighter.energy -= energy
+                self.engine.message_log.add_message(f"you accept the task and lose -{energy} energy")
+                
+                #track how much energy spent in seek mode
+                if self.engine.mode == "seek":
+                    self.engine.scorekeeper.seek_energy_spent += energy
+
+                self.engine.scorekeeper.score += energy
+
+            else:
+                energy = calcEnergy(motivation, special)
+                self.entity.fighter.energy += energy
+                self.engine.message_log.add_message(f"you accept the task and gain +{energy} energy")
+            
+            #HANDLING SCORE
+
+            #add energy other person gains/loses to t_energy_gain score
+            self.engine.scorekeeper.others_energy_gain += t_energyGain
+
+            if t_energyGain < 0 and special:
+                self.engine.scorekeeper.exploit += 1
+            elif t_energyGain < 0 and not special:
+                self.engine.scorekeeper.assistance += 1
+            elif t_energyGain > 0 and special:
+                self.engine.scorekeeper.mutual += 1
+            else:
+                self.engine.scorekeeper.reckless += 1
+                        
         else:
-            print("you move onwards")
+            print("no")
+            self.engine.message_log.add_message("you move onwards")
                 
         self.entity.fighter.resume() #return back to playing
-        
-        #kill the target
-        #TODO: if self.entity is self.engine.player then you need to make the target (T) to be dead
+        # self.engine.event_handler=MainEventHandler(self.engine) #does same thing but as above
 
-        
-        # self.engine.event_handler=MainEventHandler(self.engine) 
         print(self.engine.scorekeeper.score)
         
         

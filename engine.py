@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from tcod.console import Console
 from tcod.map import compute_fov
+from random import seed, random
 
 from input_handles import MainEventHandler
 from renderer import render_bar, render_task
@@ -40,6 +41,9 @@ class Engine:
             self.player.color = colors.salmon
             for entity in set(self.game_map.actors) - {self.player}:
                 entity.color = colors.welcome_text
+            
+            #no. of times entered seek mode is part of score
+            self.scorekeeper.seek_mode += 1
 
         else:
             self.mode = "idle"
@@ -64,8 +68,9 @@ class Engine:
     #energy degenerates as you play
     #TODO: smart way to decrease energy
     def decrease_energy(self) -> None:
-        self.player.fighter.energy -= 1
-        self.scorekeeper.score += 1
+        if random() > 0.99: #will bring this down to 50/50, just to test game
+            self.player.fighter.energy -= 1
+            self.scorekeeper.score += 1
 
     def render(self, console: Console) -> None:
         self.game_map.render(console)

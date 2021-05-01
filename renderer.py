@@ -31,6 +31,6 @@ def render_task(
 
 
     console.print(
-        x=2, y=2, string=f"""motivation: {motivation}\nT energy gain: {T_energy}\nspecial: {special}\n
-        \ny- accept the task, lose energy\nn- move onwards""", fg=colors.bar_text
+        x=2, y=2, string=f"""motivation: {motivation}\nT energy gain: {T_energy}\nspecial?: {special}\n
+        \n[y]- accept task\n[n]- move onwards""", fg=colors.bar_text
     )
