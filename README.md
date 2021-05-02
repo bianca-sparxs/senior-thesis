@@ -1,12 +1,4 @@
-# Senior Thesis
-- game (people to play)
-- Saint's algorithms to play game (tactics)
-- simulation (test out algorithms w/o game schtuff)
-
-## Simulation
-- no time so not doing this
-
-## Seek
+# Seek
 closley following [http://rogueliketutorials.com/tutorials/tcod/v2/]
 ### Premise
 Escape the dungeon! (...& look for the key, if you want)
