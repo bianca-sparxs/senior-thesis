@@ -31,7 +31,7 @@ class Fighter(Person):
         if self.engine.player is self.parent:
             death_message = "You died!"
             death_message_color = colors.player_die
-            self.parent.char = "%"
+            self.parent.char = "!"
             self.parent.color = (191, 0, 0)
             self.parent.event_handler = GameOverEventHandler(self.engine)
         else:
@@ -45,7 +45,6 @@ class Fighter(Person):
 
         self.engine.message_log.add_message(death_message, death_message_color)
     
-    
 
     @energy.setter
     def energy(self, value: int) -> None:
@@ -57,4 +56,19 @@ class Fighter(Person):
     #     self.engine.event_handler = TaskHandler(self.engine)
     def resume(self) -> None:
         self.engine.event_handler = MainEventHandler(self.engine)
+    
+    def heal(self, amount: int) -> int:
+        if self.energy == self.max_energy:
+            return 0
+
+        new_energy_value = self.energy + amount
+
+        if new_energy_value > self.max_energy:
+            new_energy_value = self.max_energy
+
+        amount_recovered = new_energy_value - self.energy
+
+        self.energy = new_energy_value
+
+        return amount_recovered
     

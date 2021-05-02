@@ -40,7 +40,7 @@ def render_task(
     console: Console, motivation: int, T_energy: int, special: bool
 ) -> None:
 
-    console.draw_rect(x=1, y=1, width=33, height=9, ch=3, bg=colors.bar_filled)
+    console.draw_frame(x=1, y=1, width=33, height=9, title="Accept the task?", fg=colors.salmon, bg=colors.bar_filled)
 
 
     console.print(

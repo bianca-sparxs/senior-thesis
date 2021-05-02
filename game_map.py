@@ -3,7 +3,7 @@ from typing import Iterable, Optional, TYPE_CHECKING
 
 import numpy as np
 import game_tiles
-from entity import Actor
+from entity import Actor, Item
 
 from tcod.console import Console
 
@@ -30,6 +30,10 @@ class Game_Map:
     @property
     def gamemap(self) -> GameMap:
         return self
+    
+    @property
+    def items(self) -> Iterator[Item]:
+        yield from (entity for entity in self.entities if isinstance(entity, Item))
 
     @property
     def actors(self) -> Iterator[Actor]:
@@ -60,6 +64,13 @@ class Game_Map:
         for actor in self.actors:
             if actor.x == x and actor.y == y:
                 return actor
+
+        return None
+    
+    def get_item_at_location(self, x: int, y: int) -> Optional[Actor]:
+        for item in self.items:
+            if item.x == x and item.y == y:
+                return item
 
         return None
 

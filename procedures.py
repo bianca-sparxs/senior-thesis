@@ -46,8 +46,9 @@ class RectangleRoom:
 def getName():
     return names.get_first_name()
 
-def place_entities(room: RectangleRoom, dungeon: Game_Map, monster_max: int) -> None:
+def place_entities(room: RectangleRoom, dungeon: Game_Map, monster_max: int, items_max: int) -> None:
     num_monsters = random.randint(0, monster_max)
+    number_of_items = random.randint(0, items_max)
 
     for i in range(num_monsters):
         x = random.randint(room.x1 + 1, room.x2 - 1)
@@ -62,6 +63,13 @@ def place_entities(room: RectangleRoom, dungeon: Game_Map, monster_max: int) -> 
                 #spawn monstertype 1
             # else:
                 #spawn monstertype 2
+        
+    for i in range(number_of_items):
+        x = random.randint(room.x1 + 1, room.x2 - 1)
+        y = random.randint(room.y1 + 1, room.y2 - 1)
+
+        if not any(entity.x == x and entity.y == y for entity in dungeon.entities):
+            entity_maker.food.spawn(dungeon, x, y)
 
 
 
@@ -89,7 +97,8 @@ def generate_dungeon(
     max_rooms: int, 
     room_min_size: int, 
     room_max_size: int,
-    monster_max: int,
+    monster_max: int, #max monster per room
+    items_max: int, #max item per room
     engine: Engine,
 ) -> Game_Map:
 
@@ -127,7 +136,7 @@ def generate_dungeon(
                 dungeon.tiles[x, y] = game_tiles.floor
 
         #push entities to room
-        place_entities(room=nw_room, dungeon=dungeon, monster_max=monster_max)
+        place_entities(room=nw_room, dungeon=dungeon, monster_max=monster_max, items_max=items_max)
 
         rooms.append(nw_room)
 

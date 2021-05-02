@@ -18,7 +18,7 @@ def motivation() -> int:
 
 #other person can gain (or lose) up to 20 energy
 def t_energyGain() -> int:
-    return int(-17 + (random.random() * 34))
+    return random.randint(-17, 17)
 
 #special are standard coin flips, doesn't mean rare
 def special() -> bool:

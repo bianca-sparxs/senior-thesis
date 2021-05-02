@@ -7,9 +7,12 @@ import input_handles
 from renderer import render_task
 from scorekeeper import ScoreKeeper
 
+import exceptions
+import colors
+
 if TYPE_CHECKING:
     from engine import Engine
-    from entity import Actor, Entity
+    from entity import Actor, Entity, Item
     from input_handles import TaskHandler, MainEventHandler
     
 
@@ -44,7 +47,15 @@ class Action:
         """
         raise NotImplementedError()
     
+class ItemAction(Action):
+    def __init__(
+        self, entity: Actor, item: Item):
+        super().__init__(entity)
+        self.item = item
 
+    def perform(self) -> None:
+        """Invoke the items ability, this action will be given to provide context."""
+        self.item.consumable.activate(self)
 
 
 class EscapeAction(Action):
@@ -83,6 +94,11 @@ class ActionWithDirection(Action):
         """Return the actor at this actions destination."""
         return self.engine.game_map.get_actor_at_location(*self.dest_xy)
     
+    @property
+    def target_item(self) -> Optional[Actor]:
+        """Return the actor at this actions destination."""
+        return self.engine.game_map.get_item_at_location(*self.dest_xy)
+    
     #each subclass needs a perform method
     def perform(self) -> None:
         raise NotImplementedError()
@@ -92,10 +108,11 @@ class BumpAction(ActionWithDirection):
     def perform(self) -> None:
         # dest_x = entity.x + self.dx
         # dest_y = entity.y + self.dy
+        target_x, target_y = self.dest_xy
+
 
         if self.target_actor:
-            return InitiateAction(self.entity, self.dx, self.dy).perform()
-
+            return InitiateAction(self.entity, self.dx, self.dy).perform()            
         else:
             return MovementAction(self.entity, self.dx, self.dy).perform()
 
@@ -154,13 +171,11 @@ class HandleTaskAction(Action):
                 self.engine.scorekeeper.reckless += 1
                         
         else:
-            print("no")
             self.engine.message_log.add_message("you move onwards")
                 
         self.entity.fighter.resume() #return back to playing
         # self.engine.event_handler=MainEventHandler(self.engine) #does same thing but as above
 
-        print(self.engine.scorekeeper.score)
         
         
 
@@ -169,11 +184,16 @@ class MovementAction(ActionWithDirection):
         dest_x, dest_y = self.dest_xy #dest_xy precalculates position of entity plus distance :)
 
         if not self.engine.game_map.in_bounds(dest_x, dest_y):
-            return  # Destination is out of bounds.
+            # Destination is out of bounds.
+            raise exceptions.Impossible("That way is blocked.")
         if not self.engine.game_map.tiles["walkable"][dest_x, dest_y]:
-            return  # Destination is blocked by a tile.
+            raise exceptions.Impossible("That way is blocked.")  # Destination is blocked by a tile.
         if self.engine.game_map.get_blocking_entity_at_location(dest_x, dest_y):
             return #destination is blocked by entity
+        elif self.target_item and self.target_item.is_active:
+            item = self.target_item
+            self.entity.move(dx=self.dx, dy=self.dy)
+            return ItemAction(self.entity, item).perform()
 
         
         self.entity.move(dx=self.dx, dy=self.dy)

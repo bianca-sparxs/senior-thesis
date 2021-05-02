@@ -22,7 +22,8 @@ def main():
     room_max_size = 10
     room_min_size = 6
     max_rooms = 30
-    monster_max = 2 #max amt of monsters in a room
+    monster_max = 3 #max amt of monsters in a room
+    items_max = 1 #max food in a room
 
  
     tileset = tcod.tileset.load_tilesheet('dejavu16x16.png', 32, 8, tcod.tileset.CHARMAP_TCOD)
@@ -38,6 +39,7 @@ def main():
         room_min_size=room_min_size, 
         room_max_size=room_max_size, 
         monster_max=monster_max, 
+        items_max=items_max,
         engine=engine
     )
     engine.update_fov()
@@ -67,8 +69,15 @@ def main():
             root_console.clear()
             engine.event_handler.on_render(console=root_console)
             context.present(root_console)
+            try:
+                for event in tcod.event.wait():
+                    context.convert_event(event)
+                    engine.event_handler.handle_events(event)
+            except Exception:  # Handle exceptions in game.
+                traceback.print_exc()  # Print error to stderr.
+                # Then print the error to the message log.
+                engine.message_log.add_message(traceback.format_exc(), colors.error)
 
-            engine.event_handler.handle_events(context)
 
             
 

@@ -4,13 +4,16 @@ from typing import TYPE_CHECKING
 
 from tcod.console import Console
 from tcod.map import compute_fov
-from random import seed, random
+from random import random
+import exceptions
 
 from input_handles import MainEventHandler
 from renderer import render_bar, render_task, render_names_at_mouse_location
 from message_log import MessageLog
 from scorekeeper import ScoreKeeper
 import colors
+
+
 
 
 if TYPE_CHECKING:
@@ -54,7 +57,10 @@ class Engine:
     def others_handleturn(self) -> None:
         for entity in set(self.game_map.actors) - {self.player}:
             if entity.ai:
-                entity.ai.perform()
+                try:
+                    entity.ai.perform()
+                except exceptions.Impossible:
+                    pass  # Ignore impossible action exceptions from AI.
     
     def update_fov(self) -> None:
         # print('update!')
@@ -69,7 +75,7 @@ class Engine:
     #energy degenerates as you play
     #TODO: smart way to decrease energy
     def decrease_energy(self) -> None:
-        if random() > 0.99: #will bring this down to 50/50, just to test game
+        if random() > 0.55: #will bring this down to 50/50, just to test game
             self.player.fighter.energy -= 1
             self.scorekeeper.score += 1
 

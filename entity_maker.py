@@ -1,6 +1,7 @@
 from components.ai import OtherPerson
 from components.fighter import Fighter
-from entity import Actor
+from components.consumable import HealingConsumable
+from entity import Actor, Item
 import names
 import colors
 
@@ -24,6 +25,13 @@ player = Actor(
     fighter=Fighter(energy=100),
     ai_cls=OtherPerson,
     
+)
+
+food = Item(
+    char="%",
+    color=(127, 0, 255),
+    name="Food",
+    consumable=HealingConsumable(amount=7),
 )
 
 # me = Entity(char="o", color=(63, 127, 63), name="You", blocks_movement=True)

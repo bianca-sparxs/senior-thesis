@@ -5,7 +5,16 @@ import tcod.event
 
 from renderer import render_task
 from tasks import create_task
-from actions import Action, BumpAction, EscapeAction, GameModeAction, HandleTaskAction
+from actions import (
+    Action, 
+    BumpAction, 
+    EscapeAction, 
+    GameModeAction, 
+    HandleTaskAction
+)
+
+import colors
+import exceptions
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -52,12 +61,30 @@ WAIT_KEYS = {
 class EventHandler(tcod.event.EventDispatch[Action]):
     def __init__(self, engine: Engine):
         self.engine = engine
-
-    def handle_events(self, context: tcod.context.Context) -> None:
-        for event in tcod.event.wait():
-            context.convert_event(event)
-            self.dispatch(event)
     
+    def handle_events(self, event: tcod.event.Event) -> None:
+        self.handle_action(self.dispatch(event))
+    
+    def handle_action(self, action: Optional[Action]) -> bool:
+        """Handle actions returned from event methods.
+
+        Returns True if the action will advance a turn.
+        """
+        if action is None:
+            return False
+
+        try:
+            action.perform()
+        except exceptions.Impossible as exc:
+            self.engine.message_log.add_message(exc.args[0], colors.impossible)
+            return False  # Skip enemy turn on exceptions.
+
+        self.engine.others_handleturn()
+        self.engine.update_fov() # Update the FOV before the players next action.
+        self.engine.decrease_energy()
+
+        return True
+
     def ev_mousemotion(self, event: tcod.event.MouseMotion) -> None:
         if self.engine.game_map.in_bounds(event.tile.x, event.tile.y):
             self.engine.mouse_location = event.tile.x, event.tile.y
@@ -69,19 +96,19 @@ class EventHandler(tcod.event.EventDispatch[Action]):
         self.engine.render(console)
 
 class MainEventHandler(EventHandler):
-    def handle_events(self, context: tcod.context.Context) -> None:
-        for event in tcod.event.wait():
-            context.convert_event(event)
-            action = self.dispatch(event)
+    # def handle_events(self, context: tcod.context.Context) -> None:
+    #     for event in tcod.event.wait():
+    #         context.convert_event(event)
+    #         action = self.dispatch(event)
 
-            if action is None:
-                continue
+    #         if action is None:
+    #             continue
 
-            action.perform()
+    #         action.perform()
 
-            self.engine.others_handleturn()
-            self.engine.update_fov()  # Update the FOV before the players next action.
-            self.engine.decrease_energy()
+    #         self.engine.others_handleturn()
+    #         self.engine.update_fov()  
+    #         self.engine.decrease_energy()
     
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
         action: Optional[Action] = None
@@ -116,15 +143,23 @@ class TaskHandler(EventHandler):
     def __init__(self, engine: Engine) -> None:
         super().__init__(engine)
         self.task = create_task()
+    
+    def handle_action(self, action: Optional[Action]) -> bool:
+        """Handle actions returned from event methods.
 
-    def handle_events(self, context: tcod.context.Context) -> None:
-        for event in tcod.event.wait():
-            action = self.dispatch(event)
+        Returns True if the action will advance a turn.
+        """
+        if action is None:
+            return False
 
-            if action is None:
-                continue
-
+        try:
             action.perform()
+        except exceptions.Impossible as exc:
+            self.engine.message_log.add_message(exc.args[0], colors.impossible)
+            return False  # Skip enemy turn on exceptions.
+        
+        return True
+
             
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
         action: Optional[Action] = None
@@ -163,14 +198,14 @@ class TaskHandler(EventHandler):
 
 
 class GameOverEventHandler(EventHandler):
-    def handle_events(self, context: tcod.context.Context) -> None:
-        for event in tcod.event.wait():
-            action = self.dispatch(event)
+    # def handle_events(self, context: tcod.context.Context) -> None:
+    #     for event in tcod.event.wait():
+    #         action = self.dispatch(event)
 
-            if action is None:
-                continue
+    #         if action is None:
+    #             continue
 
-            action.perform()
+    #         action.perform()
             
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
         action: Optional[Action] = None
