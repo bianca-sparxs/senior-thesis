@@ -48,6 +48,13 @@ wall = new_tile(
     light=(ord(" "), (255, 255, 255), (200, 180, 50)),
 )
 
+down_stairs = new_tile(
+    walkable=True,
+    transparent=True,
+    dark=(ord(">"), (0, 0, 100), (50, 50, 150)),
+    light=(ord(">"), (255, 255, 255), (200, 180, 50)),
+)
+
 #COLOR PALETTE IN SEEK MODE:
 s_floor = new_tile(
     transparent=True, 
@@ -61,4 +68,11 @@ s_wall = new_tile(
     transparent=False, 
     dark=(ord(" "), (0, 255, 255), (0, 0, 100)),
     light=(ord(" "), (255, 255, 255), colors.lite_blue),
+)
+
+s_down_stairs = new_tile(
+    walkable=True,
+    transparent=True,
+    dark=(ord(">"), (0, 0, 100), (50, 50, 150)),
+    light=(ord(">"), (255, 255, 255), (200, 180, 50)),
 )

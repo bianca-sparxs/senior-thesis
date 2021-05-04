@@ -9,7 +9,7 @@ from components.base import BaseComponent
 ##TODO: other people don't play game like you, they're just rocks
 
 if TYPE_CHECKING:
-    from entity import Actor
+    from engine import Engine
 
 class Person(BaseComponent):
     parent: Actor
@@ -33,7 +33,7 @@ class Fighter(Person):
             death_message_color = colors.player_die
             self.parent.char = "!"
             self.parent.color = (191, 0, 0)
-            self.parent.event_handler = GameOverEventHandler(self.engine)
+            self.engine.event_handler = GameOverEventHandler(self.engine)
         else:
             death_message = f"{self.parent.name} needs your help and awaits a response..."
             death_message_color = colors.lite_blue

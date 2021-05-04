@@ -5,7 +5,7 @@ import traceback
 from engine import Engine
 import entity_maker
 import colors
-from procedures import generate_dungeon
+from game_map import GameWorld
 
 
 
@@ -32,7 +32,8 @@ def main():
     
     engine = Engine(player=player)
 
-    engine.game_map = generate_dungeon(
+    engine.game_world = GameWorld(
+        engine=engine,
         m_width=map_width, 
         m_height=map_height, 
         max_rooms=max_rooms, 
@@ -40,8 +41,8 @@ def main():
         room_max_size=room_max_size, 
         monster_max=monster_max, 
         items_max=items_max,
-        engine=engine
     )
+    engine.game_world.generate_floor()
     engine.update_fov()
     engine.message_log.add_message(
         "Anyone who thinks sitting in a church makes you saint must think sitting in a garage makes you a car.", colors.lite_green

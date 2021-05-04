@@ -10,7 +10,8 @@ from actions import (
     BumpAction, 
     EscapeAction, 
     GameModeAction, 
-    HandleTaskAction
+    HandleTaskAction,
+    TakeStairsAction
 )
 
 import colors
@@ -96,24 +97,18 @@ class EventHandler(tcod.event.EventDispatch[Action]):
         self.engine.render(console)
 
 class MainEventHandler(EventHandler):
-    # def handle_events(self, context: tcod.context.Context) -> None:
-    #     for event in tcod.event.wait():
-    #         context.convert_event(event)
-    #         action = self.dispatch(event)
-
-    #         if action is None:
-    #             continue
-
-    #         action.perform()
-
-    #         self.engine.others_handleturn()
-    #         self.engine.update_fov()  
-    #         self.engine.decrease_energy()
     
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
         action: Optional[Action] = None
         key = event.sym
+        modifier = event.mod
         player = self.engine.player
+
+        #take stairs
+        if key == tcod.event.K_PERIOD and modifier & (
+            tcod.event.KMOD_LSHIFT | tcod.event.KMOD_RSHIFT
+        ):
+            return TakeStairsAction(player)
 
         #movement
         if key in MOVE_KEYS:
@@ -130,6 +125,11 @@ class MainEventHandler(EventHandler):
         #full message log history
         elif key == tcod.event.K_v:
             self.engine.event_handler = HistoryViewer(self.engine)
+
+        #quit game, see score without exit app
+        elif key == tcod.event.K_q:
+            self.engine.event_handler = GameOverEventHandler(self.engine)
+
 
         #exit game
         elif key == tcod.event.K_ESCAPE:
@@ -197,20 +197,56 @@ class TaskHandler(EventHandler):
         render_task(console, self.task["motivation"], self.task["T Energy Gain"], self.task["special"])
 
 
+CURSOR_Y_KEYS = {
+    tcod.event.K_UP: -1,
+    tcod.event.K_DOWN: 1,
+    tcod.event.K_PAGEUP: -10,
+    tcod.event.K_PAGEDOWN: 10,
+}
+
 class GameOverEventHandler(EventHandler):
-    # def handle_events(self, context: tcod.context.Context) -> None:
-    #     for event in tcod.event.wait():
-    #         action = self.dispatch(event)
+    def __init__(self, engine: Engine):
+        super().__init__(engine)  
+        # self.engine = engine  
+        self.engine.scorekeeper.game_over    
+        self.log_length = len(self.engine.scorekeeper.score_msgs.messages)
+        self.cursor = self.log_length - 1
+        
+    #render score here
+    def handle_action(self, action: Optional[Action]) -> bool:
+        """Handle actions returned from event methods.
 
-    #         if action is None:
-    #             continue
+        Returns True if the action will advance a turn.
+        """
+        if action is None:
+            return False
 
-    #         action.perform()
-            
+        try:
+            action.perform()
+        except exceptions.Impossible as exc:
+            self.engine.message_log.add_message(exc.args[0], colors.impossible)
+            return False  # Skip enemy turn on exceptions.
+        
+        return True
+
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
         action: Optional[Action] = None
         key = event.sym
         player = self.engine.player
+
+
+        # Fancy conditional movement to make it feel right.
+        if key in CURSOR_Y_KEYS:
+            adjust = CURSOR_Y_KEYS[key]
+            if adjust < 0 and self.cursor == 0:
+                # Only move from the top to the bottom when you're on the edge.
+                self.cursor = self.log_length - 1
+            elif adjust > 0 and self.cursor == self.log_length - 1:
+                # Same with bottom to top movement.
+                self.cursor = 0
+            else:
+                # Otherwise move while staying clamped to the bounds of the history log.
+                self.cursor = max(0, min(self.cursor + adjust, self.log_length - 1))
 
         #exit game
         if key == tcod.event.K_ESCAPE:
@@ -219,12 +255,41 @@ class GameOverEventHandler(EventHandler):
         # No valid key was pressed
         return action
 
-CURSOR_Y_KEYS = {
-    tcod.event.K_UP: -1,
-    tcod.event.K_DOWN: 1,
-    tcod.event.K_PAGEUP: -10,
-    tcod.event.K_PAGEDOWN: 10,
-}
+    def on_render(self, console: tcod.Console) -> None:
+        super().on_render(console)  # Draw the main state as the background.
+        
+        log_console = tcod.Console(console.width - 6, console.height - 6)
+
+        # Draw a frame with a custom banner title.
+        log_console.draw_frame(0, 0, log_console.width, log_console.height)
+        log_console.print_box(
+            0, 0, log_console.width, 1, "┤Game Over!├", alignment=tcod.CENTER
+        )
+        
+        self.engine.scorekeeper.score_msgs.render_messages(
+            log_console,
+            1,
+            1,
+            log_console.width - 2,
+            log_console.height - 2,
+            self.engine.scorekeeper.score_msgs.messages[: self.cursor + 1],
+        )
+
+
+        log_console.blit(console, 2, 2)
+
+        console.draw_rect(
+            x=1, y=31, width=33, height=2, ch=1, bg=colors.descend
+        )
+
+        console.print(
+        x=3, y=31, string=f"""use arrow keys to scroll \nthrough the score""", fg=colors.bar_text
+        )
+
+
+        
+
+
 
 
 class HistoryViewer(EventHandler):

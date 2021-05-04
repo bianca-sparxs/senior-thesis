@@ -43,8 +43,7 @@ class RectangleRoom:
 ### BEGIN NON-CLASS METHODS
 #Type hinting: methods are created before classes so if you type-hint a class name
 #it must be in strings otherwise you'll get a Name Error IFF you are not using annotations import  
-def getName():
-    return names.get_first_name()
+
 
 def place_entities(room: RectangleRoom, dungeon: Game_Map, monster_max: int, items_max: int) -> None:
     num_monsters = random.randint(0, monster_max)
@@ -105,6 +104,7 @@ def generate_dungeon(
     player = engine.player
     dungeon = Game_Map(engine, m_width, m_height, entities=[player]);
     rooms: List[RectangleRoom] = []
+    center_of_last_room = (0, 0)
     
     for i in range(max_rooms):
         # if random.random() < 0.7:
@@ -118,6 +118,8 @@ def generate_dungeon(
         y = random.randint(0, dungeon.height - room_h - 1)
 
         nw_room = RectangleRoom(x, y, room_w, room_h)
+        center_of_last_room = nw_room.center
+        
 
 
         #if any runs through all rooms, runs intersect function b/w self and other room
@@ -137,6 +139,9 @@ def generate_dungeon(
 
         #push entities to room
         place_entities(room=nw_room, dungeon=dungeon, monster_max=monster_max, items_max=items_max)
+
+        dungeon.tiles[center_of_last_room] = game_tiles.down_stairs
+        dungeon.downstairs_location = center_of_last_room
 
         rooms.append(nw_room)
 

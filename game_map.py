@@ -26,6 +26,7 @@ class Game_Map:
             (width, height), 
             fill_value=False, order="F"
         ) #tile seen before 
+        self.downstairs_location = (0, 0)
 
     @property
     def gamemap(self) -> GameMap:
@@ -103,3 +104,51 @@ class Game_Map:
                 )
 
     #i'm assuming this will rerender everything in new locations with new colors
+class GameWorld:
+    """
+    Holds the settings for the GameMap, and generates new maps when moving down the stairs.
+    """
+
+    def __init__(
+        self,
+        *,
+        engine: Engine,
+        m_width: int,
+        m_height: int,
+        max_rooms: int,
+        room_min_size: int,
+        room_max_size: int,
+        monster_max: int,
+        items_max: int,
+        current_floor: int = 0
+    ):
+        self.engine = engine
+
+        self.m_width = m_width
+        self.m_height = m_height
+
+        self.max_rooms = max_rooms
+
+        self.room_min_size = room_min_size
+        self.room_max_size = room_max_size
+
+        self.monster_max = monster_max
+        self.items_max = items_max
+
+        self.current_floor = current_floor
+
+    def generate_floor(self) -> None:
+        from procedures import generate_dungeon
+
+        self.current_floor += 1
+
+        self.engine.game_map = generate_dungeon(
+            max_rooms=self.max_rooms,
+            room_min_size=self.room_min_size,
+            room_max_size=self.room_max_size,
+            m_width=self.m_width,
+            m_height=self.m_height,
+            monster_max=self.monster_max,
+            items_max=self.items_max,
+            engine=self.engine,
+        )

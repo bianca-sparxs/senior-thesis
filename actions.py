@@ -6,7 +6,9 @@ from tasks import calcEnergy
 import input_handles
 from renderer import render_task
 from scorekeeper import ScoreKeeper
+from effects import Hope, Demotivation, Clarity, Blindness
 
+import random
 import exceptions
 import colors
 
@@ -71,6 +73,19 @@ class WaitAction(Action):
     def perform(self) -> None:
         pass
 
+class TakeStairsAction(Action):
+    def perform(self) -> None:
+        """
+        Take the stairs, if any exist at the entity's location.
+        """
+        if (self.entity.x, self.entity.y) == self.engine.game_map.downstairs_location:
+            self.engine.game_world.generate_floor()
+            self.engine.message_log.add_message(
+                "You descend the staircase.", colors.descend
+            )
+        else:
+            raise exceptions.Impossible("There are no stairs here.")
+
 #super class that will hold the movement from the input handle
 class ActionWithDirection(Action):
     def __init__(self, entity: Actor, dx: int, dy: int):
@@ -110,9 +125,18 @@ class BumpAction(ActionWithDirection):
         # dest_y = entity.y + self.dy
         target_x, target_y = self.dest_xy
 
+        if self.engine.mode == "seek":
+            if self.engine.effect:
+                self.engine.effect.turn_duration -= 1;
+            elif random.random() > 0.5: # chance of adding debuff  
+                print('add effect')
+                self.engine.effect = Hope()
+                pass
 
         if self.target_actor:
-            return InitiateAction(self.entity, self.dx, self.dy).perform()            
+            return InitiateAction(self.entity, self.dx, self.dy).perform()
+        #this needs to persist for many action
+                 
         else:
             return MovementAction(self.entity, self.dx, self.dy).perform()
 
@@ -190,10 +214,13 @@ class MovementAction(ActionWithDirection):
             raise exceptions.Impossible("That way is blocked.")  # Destination is blocked by a tile.
         if self.engine.game_map.get_blocking_entity_at_location(dest_x, dest_y):
             return #destination is blocked by entity
+        
+        #pick up item when you move onto it
         elif self.target_item and self.target_item.is_active:
             item = self.target_item
             self.entity.move(dx=self.dx, dy=self.dy)
             return ItemAction(self.entity, item).perform()
+        
 
         
         self.entity.move(dx=self.dx, dy=self.dy)

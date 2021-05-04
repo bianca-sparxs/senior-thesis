@@ -18,12 +18,13 @@ import colors
 
 if TYPE_CHECKING:
     from entity import Actor
-    from game_map import Game_Map
+    from game_map import Game_Map, GameWorld
     from input_handles import EventHandler
   
 
 class Engine:
     game_map: Game_Map
+    game_world: GameWorld
 
     def __init__(self, player: Actor):
         self.event_handler: EventHandler = MainEventHandler(self)
@@ -32,6 +33,7 @@ class Engine:
         self.message_log = MessageLog()
         self.mouse_location = (0, 0)
         self.scorekeeper = ScoreKeeper()
+        self.effect = None
     
     # @property
     # def task(self, console: Console, motivation: int, T_energy: int, special: bool):
@@ -75,9 +77,9 @@ class Engine:
     #energy degenerates as you play
     #TODO: smart way to decrease energy
     def decrease_energy(self) -> None:
-        if random() > 0.55: #will bring this down to 50/50, just to test game
-            self.player.fighter.energy -= 1
-            self.scorekeeper.score += 1
+        if random() > 0.1: #will bring this down to 50/50, just to test game
+            self.player.fighter.energy -= 100
+            self.scorekeeper.score += 100
 
     def render(self, console: Console) -> None:
         self.game_map.render(console)

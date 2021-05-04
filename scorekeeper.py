@@ -1,3 +1,11 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
+import colors
+import message_log
+
+# if TYPE_CHECKING:
+#     from message_log import MessageLog
 
 class ScoreKeeper:
     def __init__(self) -> None:
@@ -11,6 +19,8 @@ class ScoreKeeper:
         self.mutual = 0 #both people gain energy
         self.assistance = 0 #lose energy while the other person gains
         self.reckless = 0 #both people lose energy
+
+        self.score_msgs = message_log.MessageLog()
     
     """
        Learning Python: i don't think you need a decorator unless the setter
@@ -27,3 +37,48 @@ class ScoreKeeper:
     
     def tasks_done(self):
         return self.exploit + self.mutual + self.assistance + self.reckless
+
+    @property
+    def game_over(self):
+        print("game over son!")
+        self.score_msgs.add_message(f"Energy Spent:{self.energy_spent}",colors.salmon)
+        self.score_msgs.add_message(f"Seek mode represents seeking an interior life wih God",colors.salmon)
+        self.score_msgs.add_message(f"Energy spent in Seek mode: {self.seek_energy_spent}",colors.salmon)
+        self.score_msgs.add_message(f"""Time spent in Seek : 
+            {
+                self.seek_energy_spent / self.energy_spent
+                if self.seek_energy_spent > 0   
+                else 0
+            }""",colors.salmon)
+        self.score_msgs.add_message(f"Perseverance is how many times you entered seek mode vs enegy spent",colors.salmon)
+        self.score_msgs.add_message(f"""Perseverance:\n
+            {
+                self.seek_energy_spent / self.energy_spent
+                if self.seek_energy_spent > 0 and self.seek_mode > 0   
+                else 0
+            }""",colors.salmon)
+        self.score_msgs.add_message(f"There are 4 ways to interact with people",colors.salmon)
+        self.score_msgs.add_message(f"Other People Energy Gain: {self.others_energy_gain}",colors.salmon)
+        self.score_msgs.add_message(f"Assisstance: {self.assistance}",colors.salmon)
+        self.score_msgs.add_message(f"Mutual Benfit: {self.mutual}",colors.salmon)
+        self.score_msgs.add_message(f"Exploitation: {self.exploit}",colors.salmon)
+        self.score_msgs.add_message(f"Reckless: {self.reckless}", colors.bar_text)
+        self.score_msgs.add_message(f"PRESS ESC TO QUIT GAME")
+        
+        #         console.print(
+        #     x=1, y=0, string=f"""
+        #     \n
+            
+        #     \n
+        #     \n
+        #     \n
+            
+        #     \n
+        #     \n
+        #     \n
+        #     \n
+        #     \n
+        #     \n
+            
+        #     """, fg=colors.bar_text
+        # )
