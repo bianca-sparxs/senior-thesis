@@ -19,8 +19,8 @@ def main():
 
     map_width = 35
     map_height = 30
-    room_max_size = 10
-    room_min_size = 6
+    room_max_size = 7
+    room_min_size = 3
     max_rooms = 30
     monster_max = 3 #max amt of monsters in a room
     items_max = 1 #max food in a room

@@ -45,7 +45,6 @@ class HealingConsumable(Consumable):
                 colors.health_recovered,
             )
             self.deactivate()
-            print(self.parent.is_active)
 
         else:
             raise Impossible(f"Your energy is already full.")

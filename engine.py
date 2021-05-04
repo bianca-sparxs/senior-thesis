@@ -77,9 +77,9 @@ class Engine:
     #energy degenerates as you play
     #TODO: smart way to decrease energy
     def decrease_energy(self) -> None:
-        if random() > 0.1: #will bring this down to 50/50, just to test game
-            self.player.fighter.energy -= 100
-            self.scorekeeper.score += 100
+        if random() > 0.5: #will bring this down to 50/50, just to test game
+            self.player.fighter.energy -= 1
+            self.scorekeeper.score += 1
 
     def render(self, console: Console) -> None:
         self.game_map.render(console)
