@@ -6,7 +6,7 @@ from tasks import calcEnergy
 import input_handles
 from renderer import render_task
 from scorekeeper import ScoreKeeper
-from effects import Hope, Demotivation, Clarity, Blindness
+from effects import Effect, Hope, Demotivation, Clarity, Blindness
 
 import random
 import exceptions
@@ -126,11 +126,12 @@ class BumpAction(ActionWithDirection):
         target_x, target_y = self.dest_xy
 
         if self.engine.mode == "seek":
+            print(self.engine.effect)
             if self.engine.effect:
                 self.engine.effect.turn_duration -= 1;
             elif random.random() > 0.5: # chance of adding debuff  
                 print('add effect')
-                self.engine.effect = Hope()
+                self.engine.effect = Clarity(self.engine)
                 pass
 
         if self.target_actor:

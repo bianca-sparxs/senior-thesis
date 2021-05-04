@@ -7,7 +7,7 @@ from tcod.map import compute_fov
 from random import random
 import exceptions
 
-from input_handles import MainEventHandler
+from input_handles import IntroScreen
 from renderer import render_bar, render_task, render_names_at_mouse_location
 from message_log import MessageLog
 from scorekeeper import ScoreKeeper
@@ -27,7 +27,7 @@ class Engine:
     game_world: GameWorld
 
     def __init__(self, player: Actor):
-        self.event_handler: EventHandler = MainEventHandler(self)
+        self.event_handler: EventHandler = IntroScreen(self)
         self.mode = "idle"
         self.player = player
         self.message_log = MessageLog()
@@ -66,16 +66,39 @@ class Engine:
     
     def update_fov(self) -> None:
         # print('update!')
-        self.game_map.visible[:] = compute_fov(
-            self.game_map.tiles["transparent"],
-            (self.player.x, self.player.y),
-            radius=8,
-        )
+        if self.effect:
+            if self.effect.type == "blindness":
+                print("im legally blind!")
+                self.game_map.visible[:] = compute_fov(
+                    self.game_map.tiles["transparent"],
+                    (self.player.x, self.player.y),
+                    radius=1,
+                )
 
-        self.game_map.explored |= self.game_map.visible #visible tiles get added to explore
+                #do not add visible tiles to explored
+            elif self.effect.type == "clarity":
+                self.game_map.visible[:] = compute_fov(
+                    self.game_map.tiles["transparent"],
+                    (self.player.x, self.player.y),
+                    radius=1000,
+                )   
+            else:
+                self.game_map.visible[:] = compute_fov(
+                    self.game_map.tiles["transparent"],
+                    (self.player.x, self.player.y),
+                    radius=8,
+                )        
+
+        else:
+            self.game_map.visible[:] = compute_fov(
+                self.game_map.tiles["transparent"],
+                (self.player.x, self.player.y),
+                radius=8,
+            )
+
+            self.game_map.explored |= self.game_map.visible #visible tiles get added to explore
     
     #energy degenerates as you play
-    #TODO: smart way to decrease energy
     def decrease_energy(self) -> None:
         if random() > 0.5: #will bring this down to 50/50, just to test game
             self.player.fighter.energy -= 1

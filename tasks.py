@@ -2,8 +2,9 @@ import random
 
 from typing import TYPE_CHECKING
 
-from entity import Actor, Entity
+from effects import Effect
 from renderer import render_task
+
 
 if TYPE_CHECKING:
     from input_handles import TaskHandler
@@ -12,9 +13,18 @@ if TYPE_CHECKING:
 #TODO: at least add seed
     
 #scale of 1 to 10, 10 being highest motivation possible for task
-def motivation() -> int:
-    # scaled value = min + (value * (max - min))
-    return int(1 + (random.random() * 9))
+def motivation(effect: Effect) -> int:
+    if effect:
+        if effect.type == "hope":
+            return 10
+        elif effect.type == "demotivation":
+            return 1
+        else: #if effect is blindess or clarity
+            return random.randint(1, 10)
+    #if there is no effect:
+    else:
+        # scaled value = min + (value * (max - min))
+        return random.randint(1, 10)
 
 #other person can gain (or lose) up to 20 energy
 def t_energyGain() -> int:
@@ -36,9 +46,9 @@ def calcEnergy(motivation: int, special: bool) -> int:
         return  int((1/motivation * 10) + padding)
 
 
-def create_task():
+def create_task(effect: Effect):
     return {
-        "motivation": motivation(),
+        "motivation": motivation(effect),
         "T Energy Gain": t_energyGain(),
         "special": special()
     }

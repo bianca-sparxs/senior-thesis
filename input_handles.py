@@ -96,6 +96,53 @@ class EventHandler(tcod.event.EventDispatch[Action]):
     def on_render(self, console: tcod.Console) -> None:
         self.engine.render(console)
 
+
+class IntroScreen(EventHandler):
+    def __init__(self, engine: Engine) -> None:
+        super().__init__(engine)
+
+    def handle_action(self, action: Optional[Action]) -> bool:
+        """Handle actions returned from event methods.
+
+        Returns True if the action will advance a turn.
+        """
+        if action is None:
+            return False
+
+        try:
+            action.perform()
+        except exceptions.Impossible as exc:
+            self.engine.message_log.add_message(exc.args[0], colors.impossible)
+            return False  # Skip enemy turn on exceptions.
+        
+        return True
+
+            
+    def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
+        action: Optional[Action] = None
+        key = event.sym
+        player = self.engine.player
+        # print(self.task["motivation"]) 
+
+        #start game
+        if key == tcod.event.K_RETURN:
+            self.engine.event_handler = MainEventHandler(self.engine)
+
+        #quick quit game    
+        elif key == tcod.event.K_ESCAPE:
+            action = EscapeAction(player)
+    
+        # No valid key was pressed
+        return action
+    
+    def on_render(self, console: tcod.Console) -> None: # When main switches to this eventHandler, call this on_render
+        console.draw_rect(
+            x=1, y=31, width=33, height=2, ch=1, bg=colors.descend
+        )
+        console.print(
+        x=3, y=31, string=f"""PRESS ENTER TO START | ESC TO QUIT""", fg=colors.bar_text
+        )
+
 class MainEventHandler(EventHandler):
     
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[Action]:
@@ -142,7 +189,7 @@ class MainEventHandler(EventHandler):
 class TaskHandler(EventHandler):
     def __init__(self, engine: Engine) -> None:
         super().__init__(engine)
-        self.task = create_task()
+        self.task = create_task(self.engine.effect)
     
     def handle_action(self, action: Optional[Action]) -> bool:
         """Handle actions returned from event methods.
@@ -285,11 +332,6 @@ class GameOverEventHandler(EventHandler):
         console.print(
         x=3, y=31, string=f"""use arrow keys to scroll \nthrough the score""", fg=colors.bar_text
         )
-
-
-        
-
-
 
 
 class HistoryViewer(EventHandler):
