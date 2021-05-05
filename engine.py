@@ -6,6 +6,7 @@ from tcod.console import Console
 from tcod.map import compute_fov
 from random import random
 import exceptions
+import numpy as np
 
 from input_handles import IntroScreen
 from renderer import render_bar, render_task, render_names_at_mouse_location, render_effect
@@ -48,6 +49,9 @@ class Engine:
             for entity in set(self.game_map.actors) - {self.player}:
                 entity.color = colors.welcome_text
             
+           
+                
+            
             #no. of times entered seek mode is part of score
             self.scorekeeper.seek_mode += 1
 
@@ -56,6 +60,8 @@ class Engine:
             if self.effect:
                 self.effect.deactivate
             self.player.color = colors.white
+            for entity in set(self.game_map.actors) - {self.player}:
+                entity.color = colors.bar_filled
         self.message_log.add_message(self.mode, colors.lite_blue)
 
     def others_handleturn(self) -> None:

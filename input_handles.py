@@ -186,6 +186,7 @@ class MainEventHandler(EventHandler):
         # No valid key was pressed
         return action
 
+
 class TaskHandler(EventHandler):
     def __init__(self, engine: Engine) -> None:
         super().__init__(engine)

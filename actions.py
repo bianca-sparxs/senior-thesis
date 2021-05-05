@@ -129,10 +129,17 @@ class BumpAction(ActionWithDirection):
         if self.engine.mode == "seek":
             if self.engine.effect:
                 self.engine.effect.turn_duration -= 1;
-            elif random.random() > 0.2: # chance of adding debuff  
+            elif random.random() > 0.95: # chance of dungeon adding debuff  
                 print('add effect')
-                self.engine.effect = Clarity(self.engine)
-                
+                dice = random.randint(1, 4) # each debuff is uniformly distributed (25% chance each)
+                if dice == 1:
+                    self.engine.effect = Clarity(self.engine)
+                elif dice == 2:
+                    self.engine.effect = Blindness(self.engine)
+                elif dice == 3:
+                    self.engine.effect = Hope(self.engine)
+                elif dice == 4:
+                    self.engine.effect = Demotivation(self.engine)
         if self.target_actor:
             return InitiateAction(self.entity, self.dx, self.dy).perform()
         #this needs to persist for many action

@@ -89,10 +89,10 @@ class Game_Map:
                 choicelist=[self.tiles["light"], self.tiles["dark"]],
                 default=game_tiles.SHROUD,
             ) 
-        else:
+        elif self.engine.mode == "seek":
             console.tiles_rgb[0:self.width, 0:self.height] = np.select(
             condlist=[self.visible, self.explored],
-            choicelist=[self.s_tiles["light"], self.s_tiles["dark"]],
+            choicelist=[self.tiles["light"], self.tiles["dark"]],
             default=game_tiles.S_SHROUD,
         )
 

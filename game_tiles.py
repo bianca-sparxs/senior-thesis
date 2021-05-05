@@ -32,21 +32,37 @@ def new_tile(*, #enforce use of keywords, param order doesn't matter
     """Helper function for defining individual tile types """
     return np.array((walkable, transparent, dark, light), dtype=tile_dt)
 
-SHROUD = np.array((ord(" "), (255, 255, 255), colors.reg_bg), dtype=graphic_dt)
-S_SHROUD = np.array((ord(" "), (255,255,255), colors.reg_bg), dtype=graphic_dt)
+SHROUD = np.array((ord(" "), (255, 255, 255), colors.bg_purp), dtype=graphic_dt)
+S_SHROUD = np.array((ord(" "), (255,255,255), colors.v_dark_purp), dtype=graphic_dt)
 
 floor = new_tile(
     transparent=True, 
     walkable=True, 
-    dark=(ord(" "), (255, 255, 255), colors.reg_floor),
-    light=(ord(" "), (255, 255, 255), colors.salmon),
+    dark=(ord(" "), (255, 255, 255), colors.reg_purp),
+    light=(ord(" "), (255, 255, 255), colors.fov_green1),
 )
 wall = new_tile(
     walkable=False, 
     transparent=False, 
-    dark=(ord(" "), (0, 255, 255), colors.reg_wall),
+    dark=(ord(" "), (255, 255, 255), colors.dark_purp),
     light=(ord(" "), (255, 255, 255), colors.fov_green),
 )
+
+#COLOR PALETTE IN SEEK MODE:
+s_floor = new_tile(
+    transparent=True, 
+    walkable=True, 
+    dark=(ord(" "), (255, 255, 255), colors.dark_purp),
+    light=(ord(" "), (255, 255, 255), colors.fov_orange),
+)
+
+s_wall = new_tile(
+    walkable=False, 
+    transparent=False, 
+    dark=(ord(" "), (255, 255, 255), colors.salmon),
+    light=(ord(" "), (255, 255, 255), colors.fov_orange),
+)
+
 
 down_stairs = new_tile(
     walkable=True,
@@ -55,20 +71,6 @@ down_stairs = new_tile(
     light=(ord(">"), (255, 255, 255), (200, 180, 50)),
 )
 
-#COLOR PALETTE IN SEEK MODE:
-s_floor = new_tile(
-    transparent=True, 
-    walkable=True, 
-    dark=(ord(" "), (255, 255, 255), (50, 50, 150)),
-    light=(ord(" "), (255, 0, 255), colors.salmon),
-)
-
-s_wall = new_tile(
-    walkable=False, 
-    transparent=False, 
-    dark=(ord(" "), (0, 255, 255), (0, 0, 100)),
-    light=(ord(" "), (255, 255, 255), colors.lite_blue),
-)
 
 s_down_stairs = new_tile(
     walkable=True,

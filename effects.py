@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 from renderer import render_effect
+import colors
+
 if TYPE_CHECKING:
     from engine import Engine
 
@@ -43,22 +45,25 @@ class Demotivation(Effect):
     def __init__(self, engine: Engine):
         super().__init__(engine)
         self.type="demotivation"
+        self.engine.message_log.add_message("You get DEMOTIVATION: tasks are harder...", colors.salmon)
 
 # highest motivation for all tasks
 class Hope(Effect):
     def __init__(self, engine: Engine):
         super().__init__(engine)
         self.type="hope"
-        print("you got hope")
+        self.engine.message_log.add_message("You get HOPE: tasks are easier...", colors.salmon)
 
 # can see whole map
 class Clarity(Effect):
     def __init__(self, engine: Engine):
         super().__init__(engine)
         self.type="clarity"
+        self.engine.message_log.add_message("You get CLARITY: your FOV increases", colors.salmon)
 
 # FOV radius of 1
 class Blindness(Effect):
     def __init__(self, engine: Engine):
         super().__init__(engine)
         self.type="blindness"
+        self.engine.message_log.add_message("You get BLINDENSS: it is hard to see...", colors.salmon)
