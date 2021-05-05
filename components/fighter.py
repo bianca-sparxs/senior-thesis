@@ -2,14 +2,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 from render_order import RenderOrder
-from input_handles import GameOverEventHandler, TaskHandler, MainEventHandler
-import colors
 
+import colors
+from input_handles import GameOverEventHandler, TaskHandler, MainEventHandler
 from components.base import BaseComponent
-##TODO: other people don't play game like you, they're just rocks
 
 if TYPE_CHECKING:
     from engine import Engine
+    
 
 class Person(BaseComponent):
     parent: Actor

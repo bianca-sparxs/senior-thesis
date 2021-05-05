@@ -130,7 +130,6 @@ class BumpAction(ActionWithDirection):
             if self.engine.effect:
                 self.engine.effect.turn_duration -= 1;
             elif random.random() > 0.95: # chance of dungeon adding debuff  
-                print('add effect')
                 dice = random.randint(1, 4) # each debuff is uniformly distributed (25% chance each)
                 if dice == 1:
                     self.engine.effect = Clarity(self.engine)
@@ -170,7 +169,7 @@ class HandleTaskAction(Action):
     """
     def perform(self, decision: bool, motivation: int, t_energyGain: int, special: bool) -> None: 
         if decision:
-            print("you accept the task")
+            # print("you accept the task")
             if not special: 
                 energy = calcEnergy(motivation, special)
                 self.entity.fighter.energy -= energy

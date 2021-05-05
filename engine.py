@@ -13,6 +13,7 @@ from renderer import render_bar, render_task, render_names_at_mouse_location, re
 from message_log import MessageLog
 from scorekeeper import ScoreKeeper
 import colors
+from procedures import generate_dungeon
 
 
 
@@ -63,6 +64,8 @@ class Engine:
             for entity in set(self.game_map.actors) - {self.player}:
                 entity.color = colors.bar_filled
         self.message_log.add_message(self.mode, colors.lite_blue)
+    
+
 
     def others_handleturn(self) -> None:
         for entity in set(self.game_map.actors) - {self.player}:
@@ -73,10 +76,8 @@ class Engine:
                     pass  # Ignore impossible action exceptions from AI.
     
     def update_fov(self) -> None:
-        # print('update!')
         if self.effect:
             if self.effect.type == "blindness":
-                print("im legally blind!")
                 self.game_map.visible[:] = compute_fov(
                     self.game_map.tiles["transparent"],
                     (self.player.x, self.player.y),

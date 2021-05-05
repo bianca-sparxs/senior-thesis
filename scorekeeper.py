@@ -41,44 +41,30 @@ class ScoreKeeper:
     @property
     def game_over(self):
         print("game over son!")
-        self.score_msgs.add_message(f"Energy Spent:{self.energy_spent}",colors.salmon)
-        self.score_msgs.add_message(f"Seek mode represents seeking an interior life wih God",colors.salmon)
-        self.score_msgs.add_message(f"Energy spent in Seek mode: {self.seek_energy_spent}",colors.salmon)
-        self.score_msgs.add_message(f"""Time spent in Seek : 
+        self.score_msgs.add_message(f"Energy Spent:{self.energy_spent}",colors.welcome_text)
+        self.score_msgs.add_message(f">>>>>>>\n",colors.player_atk)
+        self.score_msgs.add_message(f"Seek mode represents seeking an interior life wih God",colors.fov_orange)
+        self.score_msgs.add_message(f">>>>>>>\n",colors.player_atk)
+        self.score_msgs.add_message(f"Energy spent in Seek mode: {self.seek_energy_spent}",colors.white)
+        self.score_msgs.add_message(f"""Time spent in Seek mode: 
             {
-                self.seek_energy_spent / self.energy_spent
+                int((self.seek_energy_spent / self.energy_spent)*100)
                 if self.seek_energy_spent > 0   
                 else 0
-            }""",colors.salmon)
-        self.score_msgs.add_message(f"Perseverance is how many times you entered seek mode vs enegy spent",colors.salmon)
+            }%""",colors.white)
+        self.score_msgs.add_message(f">>>>>>>\n",colors.player_atk)
+        self.score_msgs.add_message(f"Perseverance is how many times you entered seek mode vs enegy spent",colors.fov_orange)
         self.score_msgs.add_message(f"""Perseverance:\n
             {
                 self.seek_energy_spent / self.energy_spent
                 if self.seek_energy_spent > 0 and self.seek_mode > 0   
                 else 0
-            }""",colors.salmon)
-        self.score_msgs.add_message(f"There are 4 ways to interact with people",colors.salmon)
-        self.score_msgs.add_message(f"Other People Energy Gain: {self.others_energy_gain}",colors.salmon)
-        self.score_msgs.add_message(f"Assisstance: {self.assistance}",colors.salmon)
-        self.score_msgs.add_message(f"Mutual Benfit: {self.mutual}",colors.salmon)
-        self.score_msgs.add_message(f"Exploitation: {self.exploit}",colors.salmon)
+            }""",colors.white)
+        self.score_msgs.add_message(f">>>>>>>\n",colors.player_atk)
+        self.score_msgs.add_message(f"There are 4 ways to interact with people",colors.fov_orange)
+        self.score_msgs.add_message(f"Other People Energy Gain: {self.others_energy_gain}",colors.white)
+        self.score_msgs.add_message(f"Assisstance: {self.assistance}",colors.white)
+        self.score_msgs.add_message(f"Mutual Benfit: {self.mutual}",colors.white)
+        self.score_msgs.add_message(f"Exploitation: {self.exploit}",colors.white)
         self.score_msgs.add_message(f"Reckless: {self.reckless}", colors.bar_text)
-        self.score_msgs.add_message(f"PRESS RETURN TO START NEW GAME")
-        
-        #         console.print(
-        #     x=1, y=0, string=f"""
-        #     \n
-            
-        #     \n
-        #     \n
-        #     \n
-            
-        #     \n
-        #     \n
-        #     \n
-        #     \n
-        #     \n
-        #     \n
-            
-        #     """, fg=colors.bar_text
-        # )
+        self.score_msgs.add_message(f"PRESS ESC TO QUIT GAME", colors.welcome_text)

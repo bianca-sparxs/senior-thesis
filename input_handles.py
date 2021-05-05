@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import Optional, TYPE_CHECKING
 
 import tcod.event
+import copy
 
 from renderer import render_task
 from tasks import create_task
@@ -17,8 +18,10 @@ from actions import (
 import colors
 import exceptions
 
+
 if TYPE_CHECKING:
-    from engine import Engine
+
+    # import setup_game
     from actions import InitiateAction
 
 MOVE_KEYS = {
@@ -100,6 +103,31 @@ class EventHandler(tcod.event.EventDispatch[Action]):
 class IntroScreen(EventHandler):
     def __init__(self, engine: Engine) -> None:
         super().__init__(engine)
+        
+    def startover(self) -> None:
+        self.engine.new_world(self.engine)
+        
+
+        if flag:
+            player = copy.deepcopy(entity_maker.player)
+            # engine = Engine(player=player)
+
+            engine.game_world = GameWorld(
+                engine=engine,
+                m_width=map_width, 
+                m_height=map_height, 
+                max_rooms=max_rooms, 
+                room_min_size=room_min_size, 
+                room_max_size=room_max_size, 
+                monster_max=monster_max, 
+                items_max=items_max,
+            )
+            engine.game_world.generate_floor()
+            engine.update_fov()
+            engine.message_log.add_message(
+                "Anyone who thinks sitting in a church makes you saint must think sitting in a garage makes you a car.", colors.lite_green
+            )
+    
 
     def handle_action(self, action: Optional[Action]) -> bool:
         """Handle actions returned from event methods.
@@ -136,11 +164,16 @@ class IntroScreen(EventHandler):
         return action
     
     def on_render(self, console: tcod.Console) -> None: # When main switches to this eventHandler, call this on_render
+        background_image = tcod.image.load("lily.png")[:, :, :3]
+        console.draw_semigraphics(background_image, 0, 0)
+        console.print(
+        x=2, y=3, string=f"""SEEK""", fg=colors.fov_green
+        )
         console.draw_rect(
-            x=1, y=31, width=33, height=2, ch=1, bg=colors.descend
+            x=1, y=31, width=33, height=1, ch=1, bg=colors.descend
         )
         console.print(
-        x=3, y=31, string=f"""PRESS ENTER TO START""", fg=colors.bar_text
+        x=2, y=31, string=f"""PRESS ENTER TO START""", fg=colors.bar_text
         )
 
 class MainEventHandler(EventHandler):
@@ -166,7 +199,7 @@ class MainEventHandler(EventHandler):
 
         #game mode
         elif key == tcod.event.K_s:
-            print("switch game mode")
+            # print("switch game mode")
             action = GameModeAction(player)
         
         #full message log history
@@ -185,6 +218,7 @@ class MainEventHandler(EventHandler):
 
         # No valid key was pressed
         return action
+
 
 
 class TaskHandler(EventHandler):
@@ -300,9 +334,9 @@ class GameOverEventHandler(EventHandler):
         if key == tcod.event.K_ESCAPE:
             action = EscapeAction(player)
         
-        #start new game
-        elif key == tcod.event.K_RETURN:
-            self.engine.event_handler = IntroScreen(self.engine)
+        # #start new game
+        # elif key == tcod.event.K_RETURN:
+        #     self.engine.event_handler = IntroScreen(self.engine).startover
 
         # No valid key was pressed
         return action
@@ -330,13 +364,13 @@ class GameOverEventHandler(EventHandler):
 
         log_console.blit(console, 2, 2)
 
-        console.draw_rect(
-            x=1, y=31, width=33, height=2, ch=1, bg=colors.descend
-        )
+        # console.draw_rect(
+        #     x=1, y=31, width=33, height=2, ch=1, bg=colors.descend
+        # )
 
-        console.print(
-        x=3, y=31, string=f"""use arrow keys to scroll \nthrough the score""", fg=colors.bar_text
-        )
+        # console.print(
+        # x=3, y=31, string=f"""use arrow keys to scroll \nthrough the score""", fg=colors.v_dark_purp
+        # )
 
 
 class HistoryViewer(EventHandler):

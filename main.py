@@ -11,11 +11,9 @@ from game_map import GameWorld
 
 def main():
     print ("wattup")
-    # TODO: screen dimensions as the ratio of monitor, monitor dimensions are__
 
     screen_width = 35
     screen_height = 35
-    # FLAGS = tcod.context.SDL_WINDOW_MAXIMIZED
 
     map_width = 35
     map_height = 30

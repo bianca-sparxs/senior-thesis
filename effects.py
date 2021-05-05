@@ -23,12 +23,12 @@ class Effect():
 
     @property
     def turn_duration(self) -> int:
-        print(self.turns)
+        # print(self.turns)
         return self.turns
     
     @property
     def deactivate(self):
-        print("deactivae")
+        # print("deactivae")
         self.engine.effect = None
         self.turns = 0;
         self.engine.update_fov()
