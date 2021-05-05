@@ -40,7 +40,7 @@ def calcEnergy(motivation: int, special: bool) -> int:
     #padding is a random number 0 to 7 to add to energy gain/loss
     padding = int(random.random() * 7)
     if special:
-        return motivation + padding
+        return motivation
     else:
         #higher motivation -> lose less energy) + padding
         return  int((1/motivation * 10) + padding)

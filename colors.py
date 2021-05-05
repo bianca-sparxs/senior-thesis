@@ -2,10 +2,17 @@ from typing import Tuple
 
 # lol color palettes gon be the death of meeee
 lite_blue = (230, 255, 255)
-salmon = (255, 155, 133)
+salmon = (240, 142, 106)
 white =(0, 0, 0)
 lite_green=(96, 211, 148)
 
+reg_bg=(232,215,241)
+reg_floor=(207,181,199)
+reg_wall=(161,103,165)
+
+fov_orange=(228,205,176)
+fov_green=(195,218,190)
+reg_green=(54,114,49)
 #like why hexidecimal
 white = (0xFF, 0xFF, 0xFF)
 black = (0x0, 0x0, 0x0)

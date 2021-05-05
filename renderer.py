@@ -58,3 +58,6 @@ def render_names_at_mouse_location(
     )
 
     console.print(x=x, y=y, string=names_at_mouse_location)
+
+def render_effect(type: str) -> None:
+    console.print(x=2, y=4, string=f"""{type.upper()}""", fg=colors.invalid)

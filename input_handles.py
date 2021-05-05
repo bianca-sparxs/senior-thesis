@@ -140,7 +140,7 @@ class IntroScreen(EventHandler):
             x=1, y=31, width=33, height=2, ch=1, bg=colors.descend
         )
         console.print(
-        x=3, y=31, string=f"""PRESS ENTER TO START | ESC TO QUIT""", fg=colors.bar_text
+        x=3, y=31, string=f"""PRESS ENTER TO START""", fg=colors.bar_text
         )
 
 class MainEventHandler(EventHandler):
@@ -298,6 +298,10 @@ class GameOverEventHandler(EventHandler):
         #exit game
         if key == tcod.event.K_ESCAPE:
             action = EscapeAction(player)
+        
+        #start new game
+        elif key == tcod.event.K_RETURN:
+            self.engine.event_handler = IntroScreen(self.engine)
 
         # No valid key was pressed
         return action

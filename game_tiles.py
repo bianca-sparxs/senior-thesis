@@ -32,20 +32,20 @@ def new_tile(*, #enforce use of keywords, param order doesn't matter
     """Helper function for defining individual tile types """
     return np.array((walkable, transparent, dark, light), dtype=tile_dt)
 
-SHROUD = np.array((ord(" "), (255, 255, 255), (0, 0, 0)), dtype=graphic_dt)
-S_SHROUD = np.array((ord(" "), (255,255,255), colors.lite_green), dtype=graphic_dt)
+SHROUD = np.array((ord(" "), (255, 255, 255), colors.reg_bg), dtype=graphic_dt)
+S_SHROUD = np.array((ord(" "), (255,255,255), colors.reg_bg), dtype=graphic_dt)
 
 floor = new_tile(
     transparent=True, 
     walkable=True, 
-    dark=(ord(" "), (255, 255, 255), (50, 50, 150)),
-    light=(ord(" "), (255, 255, 255), (200, 180, 50)),
+    dark=(ord(" "), (255, 255, 255), colors.reg_floor),
+    light=(ord(" "), (255, 255, 255), colors.salmon),
 )
 wall = new_tile(
     walkable=False, 
     transparent=False, 
-    dark=(ord(" "), (0, 255, 255), (0, 0, 100)),
-    light=(ord(" "), (255, 255, 255), (200, 180, 50)),
+    dark=(ord(" "), (0, 255, 255), colors.reg_wall),
+    light=(ord(" "), (255, 255, 255), colors.fov_green),
 )
 
 down_stairs = new_tile(

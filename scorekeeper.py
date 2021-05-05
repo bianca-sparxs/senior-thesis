@@ -63,7 +63,7 @@ class ScoreKeeper:
         self.score_msgs.add_message(f"Mutual Benfit: {self.mutual}",colors.salmon)
         self.score_msgs.add_message(f"Exploitation: {self.exploit}",colors.salmon)
         self.score_msgs.add_message(f"Reckless: {self.reckless}", colors.bar_text)
-        self.score_msgs.add_message(f"PRESS ESC TO QUIT GAME")
+        self.score_msgs.add_message(f"PRESS RETURN TO START NEW GAME")
         
         #         console.print(
         #     x=1, y=0, string=f"""

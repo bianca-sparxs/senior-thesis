@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from tasks import calcEnergy
 import input_handles
-from renderer import render_task
+from renderer import render_task, render_effect
 from scorekeeper import ScoreKeeper
 from effects import Effect, Hope, Demotivation, Clarity, Blindness
 
@@ -126,12 +126,12 @@ class BumpAction(ActionWithDirection):
         target_x, target_y = self.dest_xy
 
         if self.engine.mode == "seek":
-            print(self.engine.effect)
             if self.engine.effect:
                 self.engine.effect.turn_duration -= 1;
-            elif random.random() > 0.5: # chance of adding debuff  
+            elif random.random() > 0.2: # chance of adding debuff  
                 print('add effect')
                 self.engine.effect = Clarity(self.engine)
+                render_effect
                 pass
 
         if self.target_actor:

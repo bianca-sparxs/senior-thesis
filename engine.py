@@ -53,6 +53,7 @@ class Engine:
 
         else:
             self.mode = "idle"
+            self.effect.deactivate
             self.player.color = colors.white
         self.message_log.add_message(self.mode, colors.lite_blue)
 
@@ -103,6 +104,8 @@ class Engine:
         if random() > 0.5: #will bring this down to 50/50, just to test game
             self.player.fighter.energy -= 1
             self.scorekeeper.score += 1
+            if self.mode == "seek":
+                self.scorekeeper.seek_energy_spent += 1
 
     def render(self, console: Console) -> None:
         self.game_map.render(console)

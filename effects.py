@@ -28,6 +28,8 @@ class Effect():
     def deactivate(self):
         print("deactivae")
         self.engine.effect = None
+        self.turns = 0;
+        self.engine.update_fov()
 
     @turn_duration.setter
     def turn_duration(self, value: int):
@@ -35,11 +37,6 @@ class Effect():
         if self.turns == 0:
             self.deactivate
 
-    
-
-
-    def render_effect(type: str):
-        pass
 
 # lowest motivation for all tasks
 class Demotivation(Effect):
