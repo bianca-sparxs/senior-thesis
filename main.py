@@ -54,7 +54,7 @@ def main():
         vsync=True,
     ) as context:
         root_console = tcod.Console(screen_width, screen_height, order="F")
-        # tcod.lib.SDL_SetWindowFullscreen(context.sdl_window_p,tcod.lib.SDL_WINDOW_FULLSCREEN_DESKTOP)
+        tcod.lib.SDL_SetWindowFullscreen(context.sdl_window_p,tcod.lib.SDL_WINDOW_FULLSCREEN_DESKTOP)
         # fullscreen = tcod.lib.SDL_GetWindowFlags(context.sdl_window_p) & (
         # tcod.lib.SDL_WINDOW_FULLSCREEN | tcod.lib.SDL_WINDOW_FULLSCREEN_DESKTOP
         #  )
