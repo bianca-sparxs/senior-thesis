@@ -60,7 +60,7 @@ class Engine:
             self.mode = "idle"
             if self.effect:
                 self.effect.deactivate
-            self.player.color = colors.white
+            self.player.color = colors.v_dark_purp
             for entity in set(self.game_map.actors) - {self.player}:
                 entity.color = colors.bar_filled
         self.message_log.add_message(self.mode, colors.lite_blue)

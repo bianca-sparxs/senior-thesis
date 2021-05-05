@@ -20,7 +20,7 @@ def getUniquePerson():
 
 player = Actor(
     char="@", 
-    color=(255, 255, 255), 
+    color=colors.v_dark_purp, 
     name="Player", 
     fighter=Fighter(energy=100),
     ai_cls=OtherPerson,
