@@ -53,11 +53,11 @@ class ScoreKeeper:
                 else 0
             }%""",colors.white)
         self.score_msgs.add_message(f">>>>>>>\n",colors.player_atk)
-        self.score_msgs.add_message(f"Perseverance is how many times you entered seek mode vs enegy spent",colors.fov_orange)
+        self.score_msgs.add_message(f"Perseverance is a measure of how consistent you were in seek mode",colors.fov_orange)
         self.score_msgs.add_message(f"""Perseverance:\n
             {
-                self.seek_energy_spent / self.energy_spent
-                if self.seek_energy_spent > 0 and self.seek_mode > 0   
+                int(int((self.seek_energy_spent / self.energy_spent)*100) / self.seek_mode)
+                if self.seek_energy_spent > 0 and self.energy_spent > 0 and self.seek_mode > 0   
                 else 0
             }""",colors.white)
         self.score_msgs.add_message(f">>>>>>>\n",colors.player_atk)
