@@ -3,7 +3,6 @@ from typing import Tuple
 # lol color palettes gon be the death of meeee
 lite_blue = (230, 255, 255)
 salmon = (240, 142, 106)
-white =(0, 0, 0)
 lite_green=(96, 211, 148)
 
 reg_bg=(232,215,241)

@@ -8,7 +8,7 @@ from random import random
 import exceptions
 
 from input_handles import IntroScreen
-from renderer import render_bar, render_task, render_names_at_mouse_location
+from renderer import render_bar, render_task, render_names_at_mouse_location, render_effect
 from message_log import MessageLog
 from scorekeeper import ScoreKeeper
 import colors
@@ -53,7 +53,8 @@ class Engine:
 
         else:
             self.mode = "idle"
-            self.effect.deactivate
+            if self.effect:
+                self.effect.deactivate
             self.player.color = colors.white
         self.message_log.add_message(self.mode, colors.lite_blue)
 
@@ -116,5 +117,7 @@ class Engine:
             maximum_value=self.player.fighter.max_energy,
             total_width=15
         )
+        if self.effect:
+            render_effect(console=console, type=self.effect.type)
         render_names_at_mouse_location(console=console, x=2, y=4, engine=self)
 

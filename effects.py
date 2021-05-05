@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
-
+from renderer import render_effect
 if TYPE_CHECKING:
     from engine import Engine
 

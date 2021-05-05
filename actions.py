@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+from tcod import Console
 
 from tasks import calcEnergy
 import input_handles
@@ -131,9 +132,7 @@ class BumpAction(ActionWithDirection):
             elif random.random() > 0.2: # chance of adding debuff  
                 print('add effect')
                 self.engine.effect = Clarity(self.engine)
-                render_effect
-                pass
-
+                
         if self.target_actor:
             return InitiateAction(self.entity, self.dx, self.dy).perform()
         #this needs to persist for many action
