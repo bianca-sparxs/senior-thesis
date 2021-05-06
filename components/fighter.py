@@ -55,7 +55,10 @@ class Fighter(Person):
     # def create_task(self) -> None:
     #     self.engine.event_handler = TaskHandler(self.engine)
     def resume(self) -> None:
-        self.engine.event_handler = MainEventHandler(self.engine)
+        if self.energy == 0:
+            self.engine.event_handler = GameOverEventHandler(self.engine)
+        else:
+            self.engine.event_handler = MainEventHandler(self.engine)
     
     def heal(self, amount: int) -> int:
         if self.energy == self.max_energy:
