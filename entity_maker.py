@@ -22,7 +22,7 @@ player = Actor(
     char="@", 
     color=colors.v_dark_purp, 
     name="Player", 
-    fighter=Fighter(energy=10),
+    fighter=Fighter(energy=100),
     ai_cls=OtherPerson,
     
 )
